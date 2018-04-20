@@ -1,0 +1,182 @@
+\documentclass{article}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+
+\title{%
+  Techniki kompilacji - koncepcja wstępna \\
+  \large Prowadzący - dr inż. Piotr Gawkowski
+}
+\author{Tomasz Nowak}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+
+\section{Opis języka}
+
+\subsection{Wstęp}
+"LOGO z L-systemem" - interpreter języka pozwalającego definiować L-system i opisywać elementarne operacje w tym systemie w języku “grafiki żółwia”.
+Proponowana nazwa własna języka: LTurtle. \newline{}
+Podstawowe elementy języka:
+\begin{itemize}
+    \item{Funkcje wbudowane, zmieniające stan rysującego żółwia}
+    \item{Zbiór symboli, każdy z nich reprezentuje pewien ciąg operacji żółwia}
+    \item{Zbiór produkcji, generujących ciągi symboli w L-systemie}
+\end{itemize}
+Dla uproszczenia, jedynym rodzajem zmiennych występujących w języku są symbole L-systemu (nie ma np. zmiennych liczbowych czy napisów). Są one jednocześnie jedynym rodzajem funkcji tworzonych przez użytkownika  LTurtle. Ten język można nazwać językiem funkcyjnym, z wyjątkiem wbudowanych operacji wykonywanych przez żółwia. Składnia języka jest połączeniem konwencji z C (klamry, średniki) z Pythonem (przypisanie wartości do zmiennej jest równoznaczne z jej definicją, nie ma deklaracji typu; są jednolinijkowe komentarze rozpoczynające się \#).
+
+\subsection{Operacje żółwia}
+Niektóre z poniższych funkcji przyjmą argumenty liczbowe. Liczby muszą być podane jawnie (nie ma zmiennych liczbowych). Możliwe "typy danych": int, float.
+Operacje dostępne są wewnątrz definicji symbolu L-systemu, a także poza nią.
+\begin{itemize}
+    \item{\textit{forward(float+)} - przesuwa żółwia, rysując linię}
+    \item{\textit{rotate(float[-180.0:180.0])} - obrót (kąt dodatni - zgodnie z ruchem wskazówek zegara, ujemny - przeciwnie)}
+    \item{\textit{penup()} - wyłącza pisak (ruch żółwia nie powoduje rysowania)}
+    \item{\textit{pendown()} - odwrotność penup()}
+    \item{\textit{pencolour(int[0:255],} int[0:255], int[0:255]) - ustawia kolor (RGB)}
+    \item{\textit{goto(float, float)} - przesuwa żółwia na współrzędne określone bezwzględnie}
+    \item{\textit{pensize(float+)} - ustawia średnicę pisaka}
+    \item{\textit{scale(float+)} - wszystkie wielkości rysowane przez żółwia będą skalowane}
+    \item{\textit{pushstate()} - zapisuje na stosie obecny stan żółwia}
+    \item{\textit{popstate()} - zdejmuje ze stosu obecny stan żółwia}
+\end{itemize}
+Operacja \textit{scale} jest potrzebna, ponieważ funkcje definiowane w L-systemie nie przyjmują żadnych argumentów - wszystkie długości są zapisane jawnymi stałymi liczbowymi. Dzięki tej operacji można wielokrotnie wykorzystywać raz zdefiniowaną funkcję do rysowania obiektów różnych rozmiarów (do zmiany położenia na obrazie wynikowym i obrotu można wykorzystać operacje \textit{rotate} i \textit{forward}). W przyszłości można dodać inne operacje do rysowania bardziej skomplikowanych kształtów, np. \textit{draw\_circle}.
+
+\subsection{Operacje na symbolach L-systemu}
+\begin{itemize}
+    \item{Definicja nowego symbolu, np.: line = \{ forward(1.0); rotate(60.0); \};}
+    \item{Zdefiniowanie reguły podstawienia, np. X $-$$>$ X + line;}
+    \item{Ewaluacja wyrażenia określoną liczbę iteracji, podstawiane pod nowy symbol, np.: operation = evaluate(5, X+X+X);}
+    \item{Wykonanie operacji przez żółwia, np.: execute(operation);}
+\end{itemize}
+Operacje przypisania znaczenia danego symbolu (=) i zdefiniowania podstawienia ($-$$>$) mogą nadpisywać poprzednią wartość tylko gdy zostaną poprzedzone słowem kluczowym \textit{redefine}, np.: \textit{redefine line = \{ forward(1.0); rotate(30.0); \};}. Operacja "=" musi być zdefiniowana dla każdego używanego symbolu, natomiast "$-$$>$"nie musi być zdefiniowana - symbol bez zdefiniowanych podstawień jest uznawany za terminalny. 
+
+\subsection{Proste przykłady kodu}
+Rysowanie kwadratu (jedna z możliwych implementacji - z demonstracją komentarzy i symbolu bez instrukcji):
+\begin{lstlisting}
+step = { forward(1.0); rotate(90.0); };
+sqaure_step = {}; # empty instruction list - allowed
+sqaure_step -> sqaure_step + step;
+square = evaluate(4, sqaure_step);
+pencolour(255, 0, 0); # direct execution of turtle command
+execute(square);
+# line with comment
+\end{lstlisting}
+Przykład 2 z \href{https://en.wikipedia.org/wiki/L-system}{angielskiej Wikipedii o L-systemach} - \textit{Fractal (binary) tree}
+(zamienione nazwy symboli: s0 zamiast 0, s1 zamiast 1, left zamiat [, right zamiast ]): 
+\begin{lstlisting}
+s0 = { forward(1.0); };
+s1 = { forward(2.0); };
+left = { pushstate(); rotate(-45.0); };
+right = { popstate(); rotate(45.0); };
+s1 -> s1 + s1;
+s0 -> s1 + left + s0 + right + s0;
+tree3 = evaluate(3, s0);
+execute(tree3);
+\end{lstlisting}
+
+
+\section{Formalna specyfikacja}
+
+\subsection{Zdefiniowane tokeny}
+Słowa kluczowe:\newline
+\textit{forward rotate penup pendown pencolour goto pensize scale pushstate popstate evaluate execute redefine }\newline
+Operatory:\newline
+= $-$$>$\newline 
+Separatory:\newline
++ \{ \} ( ) ; ,\newline
+Składniki nazw zmiennych:\newline
+(litery) (cyfry) \_\newline
+Składniki stałych liczbowych:\newline
+(cyfry) . -\newline
+Wyznaczające komentarz:\newline
+\# (koniec linii)
+
+\subsection{Gramatyka}
+Gramatyka opisana po usunięciu komentarzy (jednolinijkowy komentarz zaczynający się od \#). Konwencja - kolejne symbole definiowane są w takiej kolejności, w jakiej pojawiły się w poprzednich defnicjach (tak jakby były odkładane na stos).
+\begin{lstlisting}
+program = { statement ";" }
+statement = definition | execution
+definition = redefinition | createDefinition
+execution = literalExecution | turtleStatement
+literalExecution = "execute" "(" literalString ")"
+redefinition = "redefine" createDefinition
+createDefinition = operation | production | evaluation
+literalString = literal | literal "+" literalString
+operation = literal "=" "{" { turtleStatement ";" } "}"
+production = literal "->" literalString
+evaluation = literal "=" "evaluate" "(" int
+             "," literalsString ")
+literal = letter { letter | "_" | digit }
+turtleStatement = forwardSt | rotateSt | penupSt | pendownSt  
+                  | pencolourSt | gotoSt | pensizeSt
+                  | scaleSt | pushstateSt | popstateSt
+forwardSt = "forward" "(" float ")"
+rotateSt = "rotate" "(" float ")"
+penupSt = "penup" "(" ")"
+pendownSt = "pendown" "(" ")"
+pencolourSt = "pencolour" "(" int "," "int" "," "int" ")"
+gotoSt = "goto" "(" float "," float ")"
+pensizeSt = "pensize" "(" float ")"
+scaleSt = "scale" "(" float ")"
+pushstateSt = "pushstate" "(" ")"
+popstateSt = "popstate" "(" ")"
+int = "0" | negativeInt | positiveInt 
+letter = "a".."z" | "A".."Z"
+negativeInt = "-" positiveInt
+positiveInt = nonzeroDigit { digit }
+nonzeroDigit = "1".."9"
+digit = "0".."1"
+float = int | int "." { digit }
+
+\end{lstlisting}
+Uwaga dot. int i float - na poziomie gramatyki nie ma rozróżnienia między liczbami ujemnymi/nieujemnymi, dlatego parser zaakceptuje np. ujemną wartość koloru (zostanie ona odrzucona na poziomie semantyki/wykonania).
+
+
+\section{Wymagania i sposób uruchamiania}
+
+\subsection{Wymagania funkcjonalne}
+\begin{itemize}
+    \item{Interpreter LTurtle przyjmuje jako argumenty wywołania pojedynczy plik tekstowy z kodem i nazwę pliku wyjściowego.}
+    \item{Jako wyjście iterpreter produkuje obraz, stworzony zgodnie z opisem.}
+    \item{Rozdzielczość obrazu wyjściowego jest ustalana dynamicznie - na podstawie skrajnych współrzędnych, do których dotarł żółw.}
+    \item{W przypadku wystąpienia błędu (na poziomie parsowania / semantyki), wypisywany jest odpowiedni komunikat, wraz z podaniem, gdzie błąd wystąpił.}
+\end{itemize}
+
+\subsection{Wymagania niefunkcjonalne}
+\begin{itemize}
+    \item{Komunikaty błędu powinny być możliwie przejrzyste dla użytkownika.}
+    \item{W interpreterze zostanie wprowadzone ograniczenie na długość tokenu.}
+    \item{Interpreter w miarę możliwości będzie usuwał z pamięci niepotrzebne dane tymczasowe.}
+\end{itemize}
+
+
+\section{Wstępny opis sposobu realizacji}
+
+\subsection{Środowisko uruchomieniowe}
+Interpreter zostanie napisany w języku C++ (standard 11). Będzie korzystał z biblioteki SFML (do tworzenia grafiki). System operacyjny - Linux (ale program powinien być przenośny). Kompilator - gcc 7.3 (ale program powinien dać się skompilować też przy użyciu innego kompilatora). Sposób budowania - CMake 3.10.
+
+\subsection{Moduły interpretera}
+\begin{itemize}
+    \item{Moduł obsługi źródła - zwraca kolejne znaki dla leksera, zapamiętuje numer wiersza i numer znaku w wierszu.}
+    \item{Lekser - odczytuje tekst znak po znaku, zwraca kolejne tokeny na żądanie parsera.}
+    \item{Parser - analizuje gramatykę kodu, zstępując w głąb.}
+    \item{Analizator semantyczny - zamienia drzewo rozbioru gramatycznego na sekwencję instrukcji żółwia.}
+    \item{Moduł wykonawczy.}
+\end{itemize}
+
+\subsection{Ogólna idea sposobu wykonania}
+Kod zapisany w LTurtle można sprowadzić do liniowej sekwencji operacji żółwia, dlatego kolejne instrukcje podczas analizy semantycznej będą zapisywane na liście. Wykonanie kodu będzie podzielone na dwie części. Pierwsza, następująca wraz z analizą semantyczną, zapamiętuje kolejne instrukcje żółwia i współrzędne, na których się znalazł, ale niczego nie rysuje. Jest to spowodowane koniecznością spełnienia wymagania funkcjonalnego nr 3 - rozdzielczość obrazu jest dostosowywana dynamicznie do zakresu współrzędnych, po których przemieszczał się żółw. Rozdzielczość musi być obliczona przed rasteryzacją, ponieważ przyjęcie odgórnie narzuconej rozdzielczości wpływałoby negatywnie na jakość tworzonych obrazów albo znacząco ograniczałoby kreatywność użytkownika w tworzeniu obrazu. W drugiej fazie wykonania (w tym momencie plik z kodem programu może już być zamknięty) następuje rasteryzacja.
+
+\subsection{Testowanie}
+\begin{itemize}
+    \item{Testy jednostkowe poszczególnych modułów programu, zgodnie z ich interfejsami.}
+    \item{Testowanie intuicyjne - "czy program działa", wraz z badaniem zachowania interpretera dla błędnie napisanego kodu.}
+    \item{Porównanie wyników działania interpretera LTurtle z wynikami działania programu rysującego L-systemy, dostępnego w Internecie.}
+\end{itemize}
+\end{document}

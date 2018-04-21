@@ -7,9 +7,9 @@ keywords = ["forward",  "rotate",  "penup",  "pendown",  "pencolour",  "goto",
 def gethash(string, coeff0, coeff1, coeff2):
     retval = 0
     for c in string:
-        retval = coeff0*retval + coeff1*ord(c)
+        retval = coeff0*retval ^ coeff1*ord(c)
     retval += coeff2*len(string)
-    retval = retval % (len(keywords)+7)
+    retval = retval % (len(keywords)+4)
     return retval
 
 best_coeff = [0]*3

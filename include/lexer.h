@@ -1,12 +1,26 @@
 #pragma once
 #include <array>
+#include <cstring>
 
 class Source;
 
 class Lexer
 {
 public:
-    constexpr int MAX_LITERAL_SIZE = 16;
+    static constexpr int MAX_LITERAL_SIZE = 24;
+    struct Literal : public std::array<char, MAX_LITERAL_SIZE>
+    {
+        Literal()
+        {
+            std::memset(data(), 0, MAX_LITERAL_SIZE);
+        }
+
+        Literal(const char *str)
+        {
+            std::memset(data(), 0, MAX_LITERAL_SIZE);
+            std::strncpy(data(), str, MAX_LITERAL_SIZE -1);
+        }
+    };
 
     enum Symbol
     {
@@ -15,18 +29,26 @@ public:
         semicolon_symbol, colon_symbol, int_number, float_number, literal,
         forward_keyword, rotate_keyword, penup_keyword, pendown_keyword,
         pencolour_keyword, goto_keyword, pensize_keyword, scale_keyword, pushstate_keyword,
-        popstate_keyword, evaluate_keyword, execute_keyword, redefine_keyword, end_of_text
+        popstate_keyword, evaluate_keyword, execute_keyword, redefine_keyword, end_of_text, error
     };
 
     Lexer(Source &source);
     Symbol getNextToken();
-    const std::array<char, MAX_LITERAL_SIZE>& getLastReadLiteral() const;
+    Literal getLastReadLiteral() const; // return by VALUE (it is just 16 bytes)
     int getLastReadInt() const;
     float getLastReadFloat() const;
 
 private:
     Source &src;
-    std::array<char, MAX_LITERAL_SIZE> lastReadLiteral;
+    Literal lastReadLiteral;
     int lastReadInt;
     float lastReadFloat;
+
+    struct Keyword
+    {
+        Symbol keyword;
+        Literal string;
+    };
+
+    static const Keyword keywordHashTable[];
 };

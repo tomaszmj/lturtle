@@ -10,7 +10,7 @@ include_directories("include")
 
 set(DEFAULT_FLAGS "-Wall -pedantic -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${DEFAULT_FLAGS} -O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${DEFAULT_FLAGS} -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${DEFAULT_FLAGS} -Werror -O3")
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} main/main.cpp)
 add_executable(lexer_tests ${SOURCES} ${HEADERS} tests/test_lexer.cpp)

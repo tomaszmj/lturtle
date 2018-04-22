@@ -1,38 +1,32 @@
 #include "lexer.h"
+#include <iostream>
 
-
-// Hashing system has been generated in scrpit auxiliary/hashpy
-// To avoid collisions, size of hash table is larger than number of keywords
-const Lexer::Keyword Lexer::keywordHashTable[]  =
+// Hashing system has been generated in auxiliary subproject - hashtest
+const Lexer::Keyword Lexer::keywordHashTable[Lexer::NUMBER_OF_KEYWORDS]  =
 {
-    { error, Literal() },                           // 0 - unused
-    { rotate_keyword, Literal("rotate") },          // 1
-    { penup_keyword, Literal("penup") },            // 2
-    { redefine_keyword, Literal("redefine") },      // 3
-    { evaluate_keyword, Literal("evaluate") },      // 4
-    { pencolour_keyword, Literal("pencolour") },    // 5
-    { pushstate_keyword, Literal("pushstate") },    // 6
-    { error, Literal() },                           // 7 - usused
-    { popstate_keyword, Literal("popstate") },      // 8
-    { execute_keyword, Literal("execute") },        // 9
-    { scale_keyword, Literal("scale") },            // 10
-    { error, Literal() },                           // 11 - unused
-    { pendown_keyword, Literal("pendown") },        // 12
-    { forward_keyword, Literal("forward") },        // 13
-    { goto_keyword, Literal("goto") },              // 14
-    { error, Literal() },                           // 15 - unused
-    { pensize_keyword, Literal("pensize") }         // 16
+    { pencolour_keyword, Literal("pencolour") },
+    { forward_keyword, Literal("forward") },
+    { pendown_keyword, Literal("pendown") },
+    { scale_keyword, Literal("scale") },
+    { pushstate_keyword, Literal("pushstate") },
+    { execute_keyword, Literal("execute") },
+    { redefine_keyword, Literal("redefine") },
+    { rotate_keyword, Literal("rotate") },
+    { popstate_keyword, Literal("popstate") },
+    { penup_keyword, Literal("penup") },
+    { pensize_keyword, Literal("pensize") },
+    { evaluate_keyword, Literal("evaluate") },
+    { goto_keyword, Literal("goto") }
 };
 
 Lexer::Lexer(Source &source)
     : src(source)
 {
-
 }
 
 Lexer::Symbol Lexer::getNextToken()
 {
-
+    return error;
 }
 
 Lexer::Literal Lexer::getLastReadLiteral() const
@@ -48,4 +42,16 @@ int Lexer::getLastReadInt() const
 float Lexer::getLastReadFloat() const
 {
     return lastReadFloat;
+}
+
+int Lexer::getHash(Lexer::Literal string)
+{
+    uint32_t h = 0;
+    for(char c : string)
+    {
+        if(c == 0)
+            break;
+        h = (h*3 + 651) ^ (static_cast<uint32_t>(c)*23);
+    }
+    return static_cast<uint32_t>(h % NUMBER_OF_KEYWORDS);
 }

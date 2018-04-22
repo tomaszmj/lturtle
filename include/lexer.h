@@ -8,6 +8,7 @@ class Lexer
 {
 public:
     static constexpr int MAX_LITERAL_SIZE = 24;
+    static constexpr int NUMBER_OF_KEYWORDS = 13;
     struct Literal : public std::array<char, MAX_LITERAL_SIZE>
     {
         Literal()
@@ -37,8 +38,9 @@ public:
     Literal getLastReadLiteral() const; // return by VALUE (it is just 16 bytes)
     int getLastReadInt() const;
     float getLastReadFloat() const;
+    static int getHash(Literal string); // function only for tests, because hash is calculated while reading
 
-private:
+
     Source &src;
     Literal lastReadLiteral;
     int lastReadInt;
@@ -50,5 +52,5 @@ private:
         Literal string;
     };
 
-    static const Keyword keywordHashTable[];
+    static const Keyword keywordHashTable[NUMBER_OF_KEYWORDS];
 };

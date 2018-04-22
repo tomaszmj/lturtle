@@ -2,6 +2,7 @@
 #include "source.h"
 #include <iostream>
 #include <cctype>
+#include <limits>
 
 // Hashing system has been generated in auxiliary subproject - hashtest
 const Lexer::Keyword Lexer::keywordHashTable[Lexer::NUMBER_OF_KEYWORDS]  =
@@ -24,53 +25,19 @@ const Lexer::Keyword Lexer::keywordHashTable[Lexer::NUMBER_OF_KEYWORDS]  =
 Lexer::Lexer(Source &source)
     : src(source)
 {
+    c = src.getNextChar();
 }
 
 Lexer::Symbol Lexer::getNextToken()
 {
     for(;;)
     {
-        do
-        {
+        while(isspace(c))
             c = src.getNextChar();
-        } while(isspace(c));
-        switch(c)
-        {
-            case '=':
-            case '+':
-            case '{':
-            case '}':
-            case '(':
-            case ')':
-            case ';':
-            case ',':
-                return static_cast<Symbol>(c);
-            case '-':
-                c = src.getNextChar();
-                if(c == '>')
-                    return production_operator;
-                else if(isdigit(c))
-                    return readNumber(true);
-                else
-                    return error; // error handling will be changed
-            case '#':
-                do
-                {
-                    c = src.getNextChar();
-                    if(c == -1)
-                        return end_of_text;
-                } while(c != '\n');
-                continue;
-            case -1:
-                return end_of_text;
-            default:
-                if(isdigit(c))
-                    return readNumber(false);
-                else if(isalpha(c))
-                    return readWord();
-                else
-                    return error;
-        }
+        Symbol sym = getNextTokenInternalSwitch();
+        c = src.getNextChar();
+        if(sym != -1) // if there was no comment
+            return sym;
     }
 }
 
@@ -101,12 +68,80 @@ int Lexer::getHash(Lexer::Literal string)
     return static_cast<uint32_t>(h % NUMBER_OF_KEYWORDS);
 }
 
+Lexer::Symbol Lexer::getNextTokenInternalSwitch()
+{
+    switch(c)
+    {
+        case '=':
+        case '+':
+        case '{':
+        case '}':
+        case '(':
+        case ')':
+        case ';':
+        case ',':
+            return static_cast<Symbol>(c);
+        case '-':
+            c = src.getNextChar();
+            if(c == '>')
+                return production_operator;
+            else if(isdigit(c))
+                return readNumber(true);
+            else
+                return error; // error handling will be changed
+        case '#':
+            do
+            {
+                c = src.getNextChar();
+                if(c == -1)
+                    return end_of_text;
+            } while(c != '\n');
+            return static_cast<Symbol>(-1); // special value incidating that there was comment and new token needs to be found
+        case -1:
+            return end_of_text;
+        default:
+            if(isdigit(c))
+                return readNumber(false);
+            else if(isalpha(c))
+                return readWord();
+            else
+                return error;
+    }
+}
+
 Lexer::Symbol Lexer::readNumber(bool isnegative)
+{
+    if(c == '0')
+    {
+        c = src.getNextChar();
+        if(c == '.')
+            return readFloat(0, isnegative);
+        else if(isdigit(c))
+            return error;
+        lastReadInt = 0;
+        return int_number;
+    }
+    long long unsigned x = c - '0';
+    while(isdigit(c = src.getNextChar()))
+    {
+        x = x*10 + c - '0';
+        if(x > std::numeric_limits<int>::max())
+            return error;
+    }
+    if(c == '.')
+        return readFloat(x, isnegative);
+    lastReadInt = static_cast<int>(x);
+    if(isnegative)
+        lastReadInt = -lastReadInt;
+    return int_number;
+}
+
+Lexer::Symbol Lexer::readWord()
 {
 
 }
 
-Lexer::Symbol Lexer::readWord()
+Lexer::Symbol Lexer::readFloat(unsigned long long integer_part, bool isnegative)
 {
 
 }

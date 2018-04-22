@@ -46,7 +46,7 @@ private:
     Literal lastReadLiteral;
     int lastReadInt;
     float lastReadFloat;
-    char c; // last read character
+    char c; // last read character, one AFTER last returned token
 
     struct Keyword
     {
@@ -56,6 +56,8 @@ private:
 
     static const Keyword keywordHashTable[NUMBER_OF_KEYWORDS];
 
+    Symbol getNextTokenInternalSwitch();
     Symbol readNumber(bool isnegative);
     Symbol readWord();
+    Symbol readFloat(long long unsigned integer_part, bool isnegative);
 };

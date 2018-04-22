@@ -1,5 +1,7 @@
 #include "lexer.h"
+#include "source.h"
 #include <iostream>
+#include <cctype>
 
 // Hashing system has been generated in auxiliary subproject - hashtest
 const Lexer::Keyword Lexer::keywordHashTable[Lexer::NUMBER_OF_KEYWORDS]  =
@@ -26,7 +28,52 @@ Lexer::Lexer(Source &source)
 
 Lexer::Symbol Lexer::getNextToken()
 {
-    return error;
+    for(;;)
+    {
+        c = src.getNextChar();
+        switch(c)
+        {
+            case '=':
+            case '+':
+            case '{':
+            case '}':
+            case '(':
+            case ')':
+            case ')':
+            case ';':
+            case ',':
+                return static_cast<Symbol>(c);
+            case '-':
+                c = src.getNextChar();
+                if(c == '>')
+                    return production_operator;
+                else if(isdigit(c))
+                    return readNumber();
+                else
+                    return error;
+            case '#':
+                for(;;)
+                {
+                    c = src.getNextChar();
+                    if(c == '\n')
+                        break;
+                    else if(c == -1)
+                        return end_of_text;
+                }
+                continue;
+            case -1:
+                return end_of_text;
+            default:
+                if(isspace(c))
+                    continue;
+                if(isdigit(c))
+                    return readNumber();
+                else if(isalpha(c))
+                    return readWord();
+                else
+                    return error;
+        }
+    }
 }
 
 Lexer::Literal Lexer::getLastReadLiteral() const
@@ -54,4 +101,14 @@ int Lexer::getHash(Lexer::Literal string)
         h = (h*3 + 651) ^ (static_cast<uint32_t>(c)*23);
     }
     return static_cast<uint32_t>(h % NUMBER_OF_KEYWORDS);
+}
+
+Lexer::Symbol Lexer::readNumber()
+{
+
+}
+
+Lexer::Symbol Lexer::readWord()
+{
+
 }

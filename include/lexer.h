@@ -25,12 +25,13 @@ public:
 
     enum Symbol
     {
-        equals_symbol, production_symbol, plus_symbol, l_sqare_bracket_symbol,
-        r_square_bracket_symbol, l_round_bracket_symbol, r_round_bracket_symbol,
-        semicolon_symbol, colon_symbol, int_number, float_number, literal,
+        error, end_of_text, int_number, float_number, literal,
         forward_keyword, rotate_keyword, penup_keyword, pendown_keyword,
         pencolour_keyword, goto_keyword, pensize_keyword, scale_keyword, pushstate_keyword,
-        popstate_keyword, evaluate_keyword, execute_keyword, redefine_keyword, end_of_text, error
+        popstate_keyword, evaluate_keyword, execute_keyword, redefine_keyword,
+        production_operator, equals_symbol = '=', plus_symbol = '+', l_curly_bracket_symbol = '{',
+        r_curly_bracket_symbol = '}', l_round_bracket_symbol = '(', r_round_bracket_symbol = ')',
+        semicolon_symbol = ';', colon_symbol = ','
     };
 
     Lexer(Source &source);
@@ -40,11 +41,12 @@ public:
     float getLastReadFloat() const;
     static int getHash(Literal string); // function only for tests, because hash is calculated while reading
 
-
+private:
     Source &src;
     Literal lastReadLiteral;
     int lastReadInt;
     float lastReadFloat;
+    char c; // last read character
 
     struct Keyword
     {
@@ -53,4 +55,7 @@ public:
     };
 
     static const Keyword keywordHashTable[NUMBER_OF_KEYWORDS];
+
+    Symbol readNumber();
+    Symbol readWord();
 };

@@ -23,7 +23,7 @@ public:
         }
     };
 
-    enum Symbol
+    enum Symbol : char
     {
         error, end_of_text, int_number, float_number, literal,
         forward_keyword, rotate_keyword, penup_keyword, pendown_keyword,
@@ -56,6 +56,6 @@ private:
 
     static const Keyword keywordHashTable[NUMBER_OF_KEYWORDS];
 
-    Symbol readNumber();
+    Symbol readNumber(bool isnegative);
     Symbol readWord();
 };

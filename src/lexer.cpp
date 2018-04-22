@@ -30,7 +30,10 @@ Lexer::Symbol Lexer::getNextToken()
 {
     for(;;)
     {
-        c = src.getNextChar();
+        do
+        {
+            c = src.getNextChar();
+        } while(isspace(c));
         switch(c)
         {
             case '=':
@@ -38,7 +41,6 @@ Lexer::Symbol Lexer::getNextToken()
             case '{':
             case '}':
             case '(':
-            case ')':
             case ')':
             case ';':
             case ',':
@@ -48,26 +50,22 @@ Lexer::Symbol Lexer::getNextToken()
                 if(c == '>')
                     return production_operator;
                 else if(isdigit(c))
-                    return readNumber();
+                    return readNumber(true);
                 else
-                    return error;
+                    return error; // error handling will be changed
             case '#':
-                for(;;)
+                do
                 {
                     c = src.getNextChar();
-                    if(c == '\n')
-                        break;
-                    else if(c == -1)
+                    if(c == -1)
                         return end_of_text;
-                }
+                } while(c != '\n');
                 continue;
             case -1:
                 return end_of_text;
             default:
-                if(isspace(c))
-                    continue;
                 if(isdigit(c))
-                    return readNumber();
+                    return readNumber(false);
                 else if(isalpha(c))
                     return readWord();
                 else
@@ -103,7 +101,7 @@ int Lexer::getHash(Lexer::Literal string)
     return static_cast<uint32_t>(h % NUMBER_OF_KEYWORDS);
 }
 
-Lexer::Symbol Lexer::readNumber()
+Lexer::Symbol Lexer::readNumber(bool isnegative)
 {
 
 }

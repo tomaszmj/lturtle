@@ -1,4 +1,4 @@
-x = { forward(2);rotate(0); }; # comment %#$%
+x = { forward(2);rotate(-1.010000001); }; # comment %#$%
 y_1 = x+x;
 # comment
 # comment

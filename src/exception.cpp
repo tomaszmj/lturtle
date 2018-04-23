@@ -3,7 +3,7 @@
 #include "source.h"
 
 Exception::Exception(std::string &&message)
-    : msg(message)
+    : msg(message + "\n")
 {}
 
 const char *Exception::what() const noexcept
@@ -13,5 +13,5 @@ const char *Exception::what() const noexcept
 
 LexerException::LexerException(const Lexer &lex, std::string &&msg)
     : Exception("Lexer error (line " + std::to_string(lex.getSource().getLine()) +
-                ", position " + std::to_string(lex.getSource().getPosition()) + "): " + msg)
+                ", position " + std::to_string(lex.getSource().getPosition()) + "): " + msg + "\n")
 {}

@@ -12,7 +12,7 @@ public:
     unsigned getPosition() const;
 
 private:
-    std::ifstream file; // might be unused - see constructiors
+    std::ifstream file; // might be unused - see constructors
     std::istream &input;
     unsigned line;
     unsigned position;

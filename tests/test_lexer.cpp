@@ -1,5 +1,6 @@
 #include "source.h"
 #include "lexer.h"
+#include "exception.h"
 #include <string>
 #include <sstream>
 #define BOOST_TEST_MODULE lexer
@@ -23,7 +24,7 @@ BOOST_AUTO_TEST_CASE( get_next_token_random )
     BOOST_REQUIRE(lex.getNextToken() == Lexer::int_number);
     BOOST_REQUIRE(lex.getLastReadInt() == -123);
     BOOST_REQUIRE(lex.getNextToken() == Lexer::semicolon_symbol);
-    BOOST_REQUIRE(lex.getNextToken() == Lexer::error);
+    BOOST_REQUIRE_THROW(lex.getNextToken() , LexerException);
 }
 
 
@@ -98,7 +99,7 @@ BOOST_AUTO_TEST_CASE( get_next_token_literals )
     BOOST_REQUIRE(lex.getNextToken() == Lexer::literal);
     BOOST_REQUIRE(lex.getLastReadLiteral() == Lexer::Literal("kkk"));
     BOOST_REQUIRE(lex.getNextToken() == Lexer::semicolon_symbol);
-    BOOST_REQUIRE(lex.getNextToken() == Lexer::error); // too long literal
+    BOOST_REQUIRE_THROW(lex.getNextToken() , LexerException); // too long literal
 }
 
 BOOST_AUTO_TEST_CASE( get_next_token_numbers )
@@ -118,7 +119,7 @@ BOOST_AUTO_TEST_CASE( get_next_token_numbers )
     BOOST_REQUIRE(lex.getLastReadFloat() == -1.000001f);
     BOOST_REQUIRE(lex.getNextToken() == Lexer::int_number);
     BOOST_REQUIRE(lex.getLastReadInt() == -23);
-    BOOST_REQUIRE(lex.getNextToken() == Lexer::error);
+    BOOST_REQUIRE_THROW(lex.getNextToken() , LexerException);
 }
 
 BOOST_AUTO_TEST_CASE( get_next_token_numbers_error1 )
@@ -127,7 +128,7 @@ BOOST_AUTO_TEST_CASE( get_next_token_numbers_error1 )
     std::istringstream istr(input);
     Source src(istr);
     Lexer lex(src);
-    BOOST_REQUIRE(lex.getNextToken() == Lexer::error);
+    BOOST_REQUIRE_THROW(lex.getNextToken() , LexerException);
 }
 
 BOOST_AUTO_TEST_CASE( get_next_token_numbers_error2 )
@@ -136,7 +137,7 @@ BOOST_AUTO_TEST_CASE( get_next_token_numbers_error2 )
     std::istringstream istr(input);
     Source src(istr);
     Lexer lex(src);
-    BOOST_REQUIRE(lex.getNextToken() == Lexer::error);
+    BOOST_REQUIRE_THROW(lex.getNextToken() , LexerException);
 }
 
 BOOST_AUTO_TEST_CASE( get_next_token_numbers_error3 )
@@ -145,5 +146,5 @@ BOOST_AUTO_TEST_CASE( get_next_token_numbers_error3 )
     std::istringstream istr(input);
     Source src(istr);
     Lexer lex(src);
-    BOOST_REQUIRE(lex.getNextToken() == Lexer::error);
+    BOOST_REQUIRE_THROW(lex.getNextToken() , LexerException);
 }

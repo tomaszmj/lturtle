@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include "source.h"
+#include "exception.h"
 #include <iostream>
 #include <cctype>
 #include <limits>
@@ -86,7 +87,8 @@ Lexer::Symbol Lexer::getNextTokenInternalSwitch()
             else if(isdigit(c))
                 return readNumber(true);
             else
-                return error; // error handling will be changed
+                throw LexerException(*this, "Unexpected character '" + std::string(1, c) +
+                                     "' - excpected '>' or digit after '-'\n");
         case '#':
             do
             {
@@ -104,7 +106,8 @@ Lexer::Symbol Lexer::getNextTokenInternalSwitch()
             else if(isalpha(c))
                 return readWord();
             else
-                return error;
+                throw LexerException(*this, "Unexpected character '" + std::string(1, c) +
+                                            "' -  there is no token starting with it\n");
     }
 }
 
@@ -116,7 +119,7 @@ Lexer::Symbol Lexer::readNumber(bool isnegative)
         if(c == '.')
             return readFloat(0, isnegative);
         else if(isdigit(c))
-            return error;
+            throw LexerException(*this, "Number cannot start with 0" + std::string(1, c) + "/n");
         lastReadInt = 0;
         return int_number;
     }
@@ -125,7 +128,8 @@ Lexer::Symbol Lexer::readNumber(bool isnegative)
     {
         x = x*10 + c - '0';
         if(x > std::numeric_limits<int>::max())
-            return error;
+            throw LexerException(*this, "Integer constant exceeding limit " +
+                                        std::to_string(std::numeric_limits<int>::max()) + "\n");
     }
     if(c == '.')
         return readFloat(x, isnegative);
@@ -141,13 +145,14 @@ Lexer::Symbol Lexer::readFloat(unsigned long long integer_part, bool isnegative)
     double digit_weight = 0.1;
     c = src.getNextChar();
     if(!isdigit(c))
-        return error;
+        throw LexerException(*this, "Unexpected character '" + std::string(1, c) +
+                             "' - excpected digit after '.'\n");
     do
     {
         x += digit_weight * static_cast<double>(c - '0');
         digit_weight *= 0.1;
         if(digit_weight < std::numeric_limits<float>::denorm_min())
-            return error;
+            throw LexerException(*this, "Floating point constant with too many digits after '.'\n");
     } while(isdigit(c = src.getNextChar()));
     lastReadFloat = static_cast<float>(x);
     if(isnegative)
@@ -167,9 +172,7 @@ Lexer::Symbol Lexer::readWord()
         c = src.getNextChar();
         if(!isalpha(c) && !isdigit(c) && c != '_')
             break;
-        if(++first_free_index == MAX_LITERAL_SIZE)
-            return error;
-        else if(first_free_index > MAX_KEYWORD_LENGTH) // hash is no longer needed
+        else if(++first_free_index > MAX_KEYWORD_LENGTH) // hash will no longer be needed
             return readLiteral(str);
     }
     hash = hash % NUMBER_OF_KEYWORDS;
@@ -189,7 +192,8 @@ Lexer::Symbol Lexer::readLiteral(Lexer::Literal &str)
         if(!isalpha(c) && !isdigit(c) && c != '_')
             break;
         if(++first_free_index == MAX_LITERAL_SIZE)
-            return error;
+            throw LexerException(*this, "Too long name '" + std::string(str.data()) + std::string(1, c) +
+                                        "' - max accepted length is " + std::to_string(MAX_LITERAL_SIZE-1) + "\n");
     }
     lastReadLiteral = str;
     return literal;

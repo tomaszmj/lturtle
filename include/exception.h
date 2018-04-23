@@ -7,7 +7,7 @@ class Lexer;
 class Exception : public std::exception
 {
 public:
-    Exception(std::string &&msg);
+    Exception(std::string &&message);
     virtual const char* what() const noexcept;
 protected:
     std::string msg;
@@ -16,5 +16,5 @@ protected:
 class LexerException : public Exception
 {
 public:
-    LexerException(const Lexer &lex, std::string &&msg);
+    LexerException(const Lexer &lex, std::string &&message);
 };

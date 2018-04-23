@@ -1,4 +1,5 @@
 #include "source.h"
+#include "exception.h"
 
 Source::Source(std::istream &is)
     : input(is), line(0), position(0)
@@ -6,7 +7,10 @@ Source::Source(std::istream &is)
 
 Source::Source(const char *filename)
     : file(filename), input(file), line(0), position(0)
-{}
+{
+    if(!file)
+        throw Exception("Error - cannot open file " + std::string(filename) + "\n");
+}
 
 char Source::getNextChar()
 {

@@ -144,10 +144,22 @@ Lexer::Symbol Lexer::readNumber(bool isnegative)
 
 Lexer::Symbol Lexer::readFloat(unsigned long long integer_part, bool isnegative)
 {
-    //todo
-    (void)integer_part;
-    (void)isnegative;
-    return error;
+    double x = static_cast<double>(integer_part);
+    double digit_weight = 0.1;
+    c = src.getNextChar();
+    if(!isdigit(c))
+        return error;
+    do
+    {
+        x += digit_weight * static_cast<double>(c - '0');
+        digit_weight *= 0.1;
+        if(digit_weight < std::numeric_limits<float>::denorm_min())
+            return error;
+    } while(isdigit(c = src.getNextChar()));
+    lastReadFloat = static_cast<float>(x);
+    if(isnegative)
+        lastReadFloat = -lastReadFloat;
+    return float_number;
 }
 
 Lexer::Symbol Lexer::readWord()

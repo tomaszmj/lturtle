@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE( get_next_token_random )
 
 BOOST_AUTO_TEST_CASE( get_next_token_symbols_and_operator )
 {
-    const std::string input = "=+{ }  (  ) ;,->+";
+    const std::string input = "=+{ }  (  ) ;,->+ # =";
     std::istringstream istr(input);
     Source src(istr);
     Lexer lex(src);
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE( get_next_token_keywords )
 {
     const std::string input = R"(
         forward rotate penup pendown pencolour # IGNORE IT
-        goto,pensize scale->pushstate popstate
+goto,pensize scale->pushstate popstate
         evaluate+execute   redefine
     )";
     std::istringstream istr(input);
@@ -99,4 +99,42 @@ BOOST_AUTO_TEST_CASE( get_next_token_literals )
     BOOST_CHECK(lex.getLastReadLiteral() == Lexer::Literal("kkk"));
     BOOST_CHECK(lex.getNextToken() == Lexer::semicolon_symbol);
     BOOST_CHECK(lex.getNextToken() == Lexer::error); // too long literal
+}
+
+BOOST_AUTO_TEST_CASE( get_next_token_numbers )
+{
+    const std::string input = "0,1234 0.1 -1.000001 -23 00";
+    std::istringstream istr(input);
+    Source src(istr);
+    Lexer lex(src);
+    BOOST_CHECK(lex.getNextToken() == Lexer::int_number);
+    BOOST_CHECK(lex.getLastReadInt() == 0);
+    BOOST_CHECK(lex.getNextToken() == Lexer::colon_symbol);
+    BOOST_CHECK(lex.getNextToken() == Lexer::int_number);
+    BOOST_CHECK(lex.getLastReadInt() == 1234);
+    BOOST_CHECK(lex.getNextToken() == Lexer::float_number);
+    BOOST_CHECK(lex.getLastReadFloat() == 0.1f);
+    BOOST_CHECK(lex.getNextToken() == Lexer::float_number);
+    BOOST_CHECK(lex.getLastReadFloat() == -1.000001f);
+    BOOST_CHECK(lex.getNextToken() == Lexer::int_number);
+    BOOST_CHECK(lex.getLastReadInt() == -23);
+    BOOST_CHECK(lex.getNextToken() == Lexer::error);
+}
+
+BOOST_AUTO_TEST_CASE( get_next_token_numbers_overflows1 )
+{
+    const std::string input = "3000000000";
+    std::istringstream istr(input);
+    Source src(istr);
+    Lexer lex(src);
+    BOOST_CHECK(lex.getNextToken() == Lexer::error);
+}
+
+BOOST_AUTO_TEST_CASE( get_next_token_numbers_overflows2 )
+{
+    const std::string input = "0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001";
+    std::istringstream istr(input);
+    Source src(istr);
+    Lexer lex(src);
+    BOOST_CHECK(lex.getNextToken() == Lexer::error);
 }

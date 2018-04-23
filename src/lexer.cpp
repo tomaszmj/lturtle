@@ -35,7 +35,6 @@ Lexer::Symbol Lexer::getNextToken()
         while(isspace(c))
             c = src.getNextChar();
         Symbol sym = getNextTokenInternalSwitch();
-        c = src.getNextChar();
         if(sym != -1) // if there was no comment
             return sym;
     }
@@ -65,11 +64,12 @@ int Lexer::getHash(Lexer::Literal string)
             break;
         h = (h*3 + 651) ^ (static_cast<uint32_t>(c)*23);
     }
-    return static_cast<uint32_t>(h % NUMBER_OF_KEYWORDS);
+    return static_cast<int>(h % NUMBER_OF_KEYWORDS);
 }
 
 Lexer::Symbol Lexer::getNextTokenInternalSwitch()
 {
+    Symbol tmp_symbol;
     switch(c)
     {
         case '=':
@@ -80,11 +80,16 @@ Lexer::Symbol Lexer::getNextTokenInternalSwitch()
         case ')':
         case ';':
         case ',':
-            return static_cast<Symbol>(c);
+            tmp_symbol = static_cast<Symbol>(c);
+            c = src.getNextChar();
+            return tmp_symbol;
         case '-':
             c = src.getNextChar();
             if(c == '>')
+            {
+                c = src.getNextChar();
                 return production_operator;
+            }
             else if(isdigit(c))
                 return readNumber(true);
             else
@@ -96,6 +101,7 @@ Lexer::Symbol Lexer::getNextTokenInternalSwitch()
                 if(c == -1)
                     return end_of_text;
             } while(c != '\n');
+            c = src.getNextChar();
             return static_cast<Symbol>(-1); // special value incidating that there was comment and new token needs to be found
         case -1:
             return end_of_text;
@@ -136,12 +142,51 @@ Lexer::Symbol Lexer::readNumber(bool isnegative)
     return int_number;
 }
 
-Lexer::Symbol Lexer::readWord()
-{
-
-}
-
 Lexer::Symbol Lexer::readFloat(unsigned long long integer_part, bool isnegative)
 {
-
+    //todo
+    (void)integer_part;
+    (void)isnegative;
+    return error;
 }
+
+Lexer::Symbol Lexer::readWord()
+{
+    Literal str;
+    int first_free_index = 1;
+    uint32_t hash = 0;
+    for(;;)
+    {
+        hash = (hash*3 + 651) ^ (static_cast<uint32_t>(c)*23);
+        str[first_free_index - 1] = c;
+        c = src.getNextChar();
+        if(!isalpha(c) && !isdigit(c) && c != '_')
+            break;
+        if(++first_free_index == MAX_LITERAL_SIZE)
+            return error;
+        else if(first_free_index > MAX_KEYWORD_LENGTH) // hash is no longer needed
+            return readLiteral(str);
+    }
+    hash = hash % NUMBER_OF_KEYWORDS;
+    if(keywordHashTable[hash].string == str)
+        return keywordHashTable[hash].keyword;
+    lastReadLiteral = str;
+    return literal;
+}
+
+Lexer::Symbol Lexer::readLiteral(Lexer::Literal &str)
+{
+    int first_free_index = MAX_KEYWORD_LENGTH + 1;
+    for(;;)
+    {
+        str[first_free_index - 1] = c;
+        c = src.getNextChar();
+        if(!isalpha(c) && !isdigit(c) && c != '_')
+            break;
+        if(++first_free_index == MAX_LITERAL_SIZE)
+            return error;
+    }
+    lastReadLiteral = str;
+    return literal;
+}
+

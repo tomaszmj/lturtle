@@ -9,6 +9,7 @@ class Lexer
 public:
     static constexpr int MAX_LITERAL_SIZE = 24;
     static constexpr int NUMBER_OF_KEYWORDS = 13;
+    static constexpr int MAX_KEYWORD_LENGTH = 9;
     struct Literal : public std::array<char, MAX_LITERAL_SIZE>
     {
         Literal()
@@ -58,6 +59,7 @@ private:
 
     Symbol getNextTokenInternalSwitch();
     Symbol readNumber(bool isnegative);
-    Symbol readWord();
     Symbol readFloat(long long unsigned integer_part, bool isnegative);
+    Symbol readWord();
+    Symbol readLiteral(Literal &str);
 };

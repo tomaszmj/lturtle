@@ -19,7 +19,15 @@ int main(int argc, char **argv)
     do
     {
         sym = lex.getNextToken();
-        std::cout << sym << "\n";
+        std::cout << sym;
+        if(sym == Lexer::literal)
+            std::cout << " (" << lex.getLastReadLiteral().data() << ")\n";
+        else if(sym == Lexer::int_number)
+            std::cout << " (" << lex.getLastReadInt() << ")\n";
+        else if(sym == Lexer::float_number)
+            std::cout << " (" << lex.getLastReadFloat() << ")\n";
+        else
+            std::cout << "\n";
     } while(sym != Lexer::end_of_text && sym != Lexer::error);
     return 0;
 }

@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include "source.h"
+#include "exception.h"
 #include <iostream>
 
 std::ostream& operator<<(std::ostream &os, Lexer::Symbol token);
@@ -12,24 +13,32 @@ int main(int argc, char **argv)
         std::cout << "Usage: " << argv[0] << " <program file>\n";
         return -1;
     }
-    Source src(argv[1]);
-    Lexer lex(src);
-    std::cout << "Found tokens:\n";
-    Lexer::Symbol sym;
-    do
+    try
     {
-        sym = lex.getNextToken();
-        std::cout << sym;
-        if(sym == Lexer::literal)
-            std::cout << " (" << lex.getLastReadLiteral().data() << ")\n";
-        else if(sym == Lexer::int_number)
-            std::cout << " (" << lex.getLastReadInt() << ")\n";
-        else if(sym == Lexer::float_number)
-            std::cout << " (" << lex.getLastReadFloat() << ")\n";
-        else
-            std::cout << "\n";
-    } while(sym != Lexer::end_of_text && sym != Lexer::error);
-    return 0;
+        Source src(argv[1]);
+        Lexer lex(src);
+        std::cout << "Found tokens:\n";
+        Lexer::Symbol sym;
+        do
+        {
+            sym = lex.getNextToken();
+            std::cout << sym;
+            if(sym == Lexer::literal)
+                std::cout << " (" << lex.getLastReadLiteral().data() << ")\n";
+            else if(sym == Lexer::int_number)
+                std::cout << " (" << lex.getLastReadInt() << ")\n";
+            else if(sym == Lexer::float_number)
+                std::cout << " (" << lex.getLastReadFloat() << ")\n";
+            else
+                std::cout << "\n";
+        } while(sym != Lexer::end_of_text && sym != Lexer::error);
+        return 0;
+    }
+    catch(const Exception &ex)
+    {
+        std::cout << ex.what();
+        return -1;
+    }
 }
 
 std::ostream& operator<<(std::ostream &os, Lexer::Symbol token)

@@ -1,0 +1,6 @@
+x = { forward(2);rotate(0); }; # comment %#$%
+y_1 = x+x;
+# comment
+# comment
+execute(3, y_1);
+

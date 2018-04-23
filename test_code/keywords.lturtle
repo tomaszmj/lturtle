@@ -1,0 +1,3 @@
+forward rotate penup pendown # IGNORE IT
+goto   pensize scale pushstate popstate
+evaluate execute   redefine pencolour 

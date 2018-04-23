@@ -1,0 +1,4 @@
+c = {}
+c->c+c #comment
+x = { forward(007); }
+

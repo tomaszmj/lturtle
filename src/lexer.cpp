@@ -55,16 +55,9 @@ float Lexer::getLastReadFloat() const
     return lastReadFloat;
 }
 
-int Lexer::getHash(Lexer::Literal string)
+const Source &Lexer::getSource() const
 {
-    uint32_t h = 0;
-    for(char c : string)
-    {
-        if(c == 0)
-            break;
-        h = (h*3 + 651) ^ (static_cast<uint32_t>(c)*23);
-    }
-    return static_cast<int>(h % NUMBER_OF_KEYWORDS);
+   return src;
 }
 
 Lexer::Symbol Lexer::getNextTokenInternalSwitch()

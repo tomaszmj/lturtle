@@ -40,7 +40,7 @@ public:
     Literal getLastReadLiteral() const; // return by VALUE (it is just 16 bytes)
     int getLastReadInt() const;
     float getLastReadFloat() const;
-    static int getHash(Literal string); // function only for tests, because hash is calculated while reading
+    const Source& getSource() const;
 
 private:
     Source &src;

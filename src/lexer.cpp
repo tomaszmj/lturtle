@@ -6,68 +6,22 @@
 #include <limits>
 #include <cmath>
 
-Lexer::Token::Token(const Source::Position &begin)
-    : positionBegin(begin), symbol(error)
-{}
-
-Lexer::Symbol Lexer::Token::getSymbol() const
-{
-    return symbol;
-}
-
-const Source::Position &Lexer::Token::getPositionBegin() const
-{
-    return positionBegin;
-}
-
-const Source::Position &Lexer::Token::getPositionEnd() const
-{
-    return positionEnd;
-}
-
-int Lexer::Token::getInt() const
-{
-#ifdef DEBUG
-    if(symbol != int_number)
-        throw Exception("token does not contain int number");
-#endif
-    return reinterpret_cast<TokenValueInt*>(value.get())->number;
-}
-
-float Lexer::Token::getFloat() const
-{
-#ifdef DEBUG
-    if(symbol != float_number)
-        throw Exception("token does not contain float number");
-#endif
-    return reinterpret_cast<TokenValueFloat*>(value.get())->number;
-}
-
-const std::string &Lexer::Token::getLiteral() const
-{
-#ifdef DEBUG
-    if(symbol != literal)
-        throw Exception("token does not contain literal");
-#endif
-    return reinterpret_cast<TokenValueString*>(value.get())->string;
-}
-
 // Hashing system has been generated in auxiliary subproject - hashtest
 const Lexer::Keyword Lexer::keywordHashTable[Lexer::NUMBER_OF_KEYWORDS]  =
 {
-    { pencolour_keyword, "pencolour" },
-    { forward_keyword, "forward" },
-    { pendown_keyword, "pendown" },
-    { scale_keyword, "scale" },
-    { pushstate_keyword, "pushstate" },
-    { execute_keyword, "execute" },
-    { redefine_keyword, "redefine" },
-    { rotate_keyword, "rotate" },
-    { popstate_keyword, "popstate" },
-    { penup_keyword, "penup" },
-    { pensize_keyword, "pensize" },
-    { evaluate_keyword, "evaluate" },
-    { goto_keyword, "goto" }
+    { Token::pencolour_keyword, "pencolour" },
+    { Token::forward_keyword, "forward" },
+    { Token::pendown_keyword, "pendown" },
+    { Token::scale_keyword, "scale" },
+    { Token::pushstate_keyword, "pushstate" },
+    { Token::execute_keyword, "execute" },
+    { Token::redefine_keyword, "redefine" },
+    { Token::rotate_keyword, "rotate" },
+    { Token::popstate_keyword, "popstate" },
+    { Token::penup_keyword, "penup" },
+    { Token::pensize_keyword, "pensize" },
+    { Token::evaluate_keyword, "evaluate" },
+    { Token::goto_keyword, "goto" }
 };
 
 Lexer::Lexer(Source &source)
@@ -139,7 +93,7 @@ void Lexer::createNewToken()
     token.reset(new Token(src.getPosition()));
 }
 
-Lexer::TokenPtr Lexer::releaseToken(Symbol token_type)
+Lexer::TokenPtr Lexer::releaseToken(Token::Symbol token_type)
 {
     token->symbol = token_type;
     token->positionEnd = src.getPosition();
@@ -148,7 +102,7 @@ Lexer::TokenPtr Lexer::releaseToken(Symbol token_type)
 
 Lexer::TokenPtr Lexer::readOneCharacterSymbol()
 {
-    Symbol symbol = static_cast<Lexer::Symbol>(src.c());
+    Token::Symbol symbol = static_cast<Token::Symbol>(src.c());
     src.next();
     return releaseToken(symbol);
 }
@@ -158,7 +112,7 @@ Lexer::TokenPtr Lexer::readProductionOperatorOrNumber()
     if(src.c() == '>')
     {
         src.next();
-        return releaseToken(production_operator);
+        return releaseToken(Token::production_operator);
     }
     else if(isdigit(src.c()))
         return readNumber(true);
@@ -170,7 +124,7 @@ Lexer::TokenPtr Lexer::readProductionOperatorOrNumber()
 
 Lexer::TokenPtr Lexer::readEndOfText()
 {
-    return releaseToken(end_of_text);
+    return releaseToken(Token::end_of_text);
 }
 
 Lexer::TokenPtr Lexer::readWordOrNumber()
@@ -181,7 +135,7 @@ Lexer::TokenPtr Lexer::readWordOrNumber()
         return readWord();
     else
         throw LexerException(*this, "Unexpected character '" + std::string(1, src.c()) +
-                                    "' -  there is no token starting with it");
+                                    "' - there is no token starting with it");
 }
 
 Lexer::TokenPtr Lexer::readNumber(bool isnegative)
@@ -207,8 +161,8 @@ Lexer::TokenPtr Lexer::readNumber(bool isnegative)
     int tmp = static_cast<int>(x);
     if(isnegative)
         tmp = -tmp;
-    token->value.reset(new TokenValueInt(tmp));
-    return releaseToken(int_number);
+    token->value.reset(new Token::ValueInt(tmp));
+    return releaseToken(Token::int_number);
 }
 
 Lexer::TokenPtr Lexer::readNumberStartingWith0(bool isnegative)
@@ -220,8 +174,8 @@ Lexer::TokenPtr Lexer::readNumberStartingWith0(bool isnegative)
     }
     else if(isdigit(src.c()))
         throw LexerException(*this, "Number cannot start with 0" + std::string(1, src.c()));
-    token->value.reset(new TokenValueInt(0));
-    return releaseToken(int_number);
+    token->value.reset(new Token::ValueInt(0));
+    return releaseToken(Token::int_number);
 }
 
 Lexer::TokenPtr Lexer::readFloat(unsigned long long integer_part, bool isnegative)
@@ -243,8 +197,8 @@ Lexer::TokenPtr Lexer::readFloat(unsigned long long integer_part, bool isnegativ
     double tmp = static_cast<double>(integer_part) + static_cast<double>(x) / static_cast<double>(std::pow(10, i));
     if(isnegative)
         tmp = -tmp;
-    token->value.reset(new TokenValueFloat(static_cast<float>(tmp)));
-    return releaseToken(float_number);
+    token->value.reset(new Token::ValueFloat(static_cast<float>(tmp)));
+    return releaseToken(Token::float_number);
 }
 
 Lexer::TokenPtr Lexer::readWord()
@@ -263,21 +217,6 @@ Lexer::TokenPtr Lexer::readWord()
     hash = hash % NUMBER_OF_KEYWORDS;
     if(str.length() <= MAX_KEYWORD_LENGTH && keywordHashTable[hash].string == str)
         return releaseToken(keywordHashTable[hash].keyword);
-    token->value.reset(new TokenValueString(str));
-    return releaseToken(literal);
-}
-
-Lexer::TokenPtr Lexer::readLiteral()
-{
-//    int first_free_index = MAX_KEYWORD_LENGTH + 1;
-//    for(;;)
-//    {
-//        str[first_free_index - 1] = c;
-//        c = src.next();
-//        if(!isalpha(c) && !isdigit(c) && c != '_')
-//            break;
-
-//    }
-//    lastReadLiteral = str;
-    return releaseToken(error);
+    token->value.reset(new Token::ValueString(str));
+    return releaseToken(Token::literal);
 }

@@ -20,10 +20,10 @@ BOOST_AUTO_TEST_CASE( get_next_token_random )
     std::istringstream istr(input);
     Source src(istr);
     Lexer lex(src);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::equals_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::equals_symbol);
     Lexer::TokenPtr t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::int_number && t->getInt() == -123);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::semicolon_symbol);
+    BOOST_REQUIRE(t->getSymbol() == Token::int_number && t->getInt() == -123);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::semicolon_symbol);
     BOOST_REQUIRE_THROW(lex.getNextToken()->getSymbol(), LexerException);
 }
 
@@ -34,19 +34,19 @@ BOOST_AUTO_TEST_CASE( get_next_token_symbols_and_operator )
     std::istringstream istr(input);
     Source src(istr);
     Lexer lex(src);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::equals_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::plus_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::l_curly_bracket_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::r_curly_bracket_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::l_round_bracket_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::r_round_bracket_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::semicolon_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::colon_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::production_operator);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::plus_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::end_of_text);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::end_of_text); // repeat on purpose
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::end_of_text); // repeat on purpose
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::equals_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::plus_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::l_curly_bracket_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::r_curly_bracket_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::l_round_bracket_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::r_round_bracket_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::semicolon_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::colon_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::production_operator);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::plus_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::end_of_text);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::end_of_text); // repeat on purpose
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::end_of_text); // repeat on purpose
 }
 
 BOOST_AUTO_TEST_CASE( get_next_token_keywords )
@@ -59,23 +59,23 @@ goto,pensize scale->pushstate popstate
     std::istringstream istr(input);
     Source src(istr);
     Lexer lex(src);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::forward_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::rotate_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::penup_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::pendown_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::pencolour_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::goto_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::colon_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::pensize_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::scale_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::production_operator);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::pushstate_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::popstate_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::evaluate_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::plus_symbol);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::execute_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::redefine_keyword);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::end_of_text);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::forward_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::rotate_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::penup_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::pendown_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::pencolour_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::goto_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::colon_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::pensize_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::scale_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::production_operator);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::pushstate_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::popstate_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::evaluate_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::plus_symbol);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::execute_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::redefine_keyword);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::end_of_text);
 }
 
 BOOST_AUTO_TEST_CASE( get_next_token_literals )
@@ -88,17 +88,17 @@ BOOST_AUTO_TEST_CASE( get_next_token_literals )
     Source src(istr);
     Lexer lex(src);
     Lexer::TokenPtr t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::literal && t->getLiteral() == "x");
+    BOOST_REQUIRE(t->getSymbol() == Token::literal && t->getLiteral() == "x");
     t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::literal && t->getLiteral() == "abcd");
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::production_operator);
+    BOOST_REQUIRE(t->getSymbol() == Token::literal && t->getLiteral() == "abcd");
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::production_operator);
     t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::literal && t->getLiteral() == "execut_e");
+    BOOST_REQUIRE(t->getSymbol() == Token::literal && t->getLiteral() == "execut_e");
     t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::literal && t->getLiteral() == "a12345678901234567890123");
+    BOOST_REQUIRE(t->getSymbol() == Token::literal && t->getLiteral() == "a12345678901234567890123");
     t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::literal && t->getLiteral() == "kkk");
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::semicolon_symbol);
+    BOOST_REQUIRE(t->getSymbol() == Token::literal && t->getLiteral() == "kkk");
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::semicolon_symbol);
     BOOST_REQUIRE_THROW(lex.getNextToken(), LexerException); // too long literal
 }
 
@@ -109,16 +109,16 @@ BOOST_AUTO_TEST_CASE( get_next_token_numbers )
     Source src(istr);
     Lexer lex(src);
     Lexer::TokenPtr t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::int_number && t->getInt() == 0);
-    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Lexer::colon_symbol);
+    BOOST_REQUIRE(t->getSymbol() == Token::int_number && t->getInt() == 0);
+    BOOST_REQUIRE(lex.getNextToken()->getSymbol() == Token::colon_symbol);
     t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::int_number && t->getInt() == 1234);
+    BOOST_REQUIRE(t->getSymbol() == Token::int_number && t->getInt() == 1234);
     t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::float_number && t->getFloat() == 0.1f);
+    BOOST_REQUIRE(t->getSymbol() == Token::float_number && t->getFloat() == 0.1f);
     t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::float_number && t->getFloat() == -1.000001f);
+    BOOST_REQUIRE(t->getSymbol() == Token::float_number && t->getFloat() == -1.000001f);
     t = lex.getNextToken();
-    BOOST_REQUIRE(t->getSymbol() == Lexer::int_number && t->getInt() == -23);
+    BOOST_REQUIRE(t->getSymbol() == Token::int_number && t->getInt() == -23);
     BOOST_REQUIRE_THROW(lex.getNextToken()->getSymbol(), LexerException);
 }
 

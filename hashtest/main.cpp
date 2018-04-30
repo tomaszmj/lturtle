@@ -72,6 +72,6 @@ int main()
     {
         std::cout << "Found optimal 1-1 hashing (without collisions):\n";
         for(int i = 0; i < N_HASHES; ++i)
-            std::cout << "{ " << keywords[hashTable[i]] << "_keyword, Literal(\"" << keywords[hashTable[i]] << "\") },\n";
+            std::cout << "{ Token::" << keywords[hashTable[i]] << "_keyword, \"" << keywords[hashTable[i]] << "\" },\n";
     }
 }

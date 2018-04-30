@@ -1,38 +1,40 @@
 #include "source.h"
 #include "exception.h"
 
-Source::Source(std::istream &is)
-    : input(is), line(0), position(0)
+Source::Position::Position()
+    : line(1), inLine(0), inFile(0)
 {}
 
-Source::Source(const char *filename)
-    : file(filename), input(file), line(0), position(0)
-{
-    if(!file)
-        throw Exception("Error - cannot open file " + std::string(filename));
-}
+Source::Position::Position(const Source::Position &p)
+    : line(p.line), inLine(p.inLine), inFile(p.inFile)
+{}
 
-char Source::getNextChar()
+Source::Source(std::istream &is)
+    : input(is)
+{}
+
+char Source::next()
 {
     if(!input)
         return -1;
-    char c = input.get();
-    if(c == '\n')
+    currentChar = input.get();
+    ++position.inFile;
+    if(currentChar == '\n')
     {
-        position = 0;
-        ++line;
+        position.inLine = 0;
+        ++position.line;
     }
     else
-        ++position;
-    return c;
+        ++position.inLine;
+    return currentChar;
 }
 
-unsigned Source::getLine() const
+char Source::c() const
 {
-    return line;
+    return currentChar;
 }
 
-unsigned Source::getPosition() const
+const Source::Position &Source::getPosition() const
 {
     return position;
 }

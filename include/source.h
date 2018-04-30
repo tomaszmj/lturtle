@@ -1,19 +1,26 @@
 #pragma once
 #include <istream>
-#include <fstream>
 
 class Source
 {
 public:
+    struct Position
+    {
+        unsigned line;
+        unsigned inLine;
+        long long unsigned inFile;
+
+        Position();
+        Position(const Position &p);
+    };
+
     Source(std::istream &is);
-    Source(const char *filename);
-    char getNextChar();
-    unsigned getLine() const;
-    unsigned getPosition() const;
+    char next();
+    char c() const;
+    const Position &getPosition() const;
 
 private:
-    std::ifstream file; // might be unused - see constructors
     std::istream &input;
-    unsigned line;
-    unsigned position;
+    Position position;
+    char currentChar;
 };

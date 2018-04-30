@@ -1,28 +1,14 @@
 #pragma once
-#include <array>
-#include <cstring>
-
-class Source;
+#include "source.h"
+#include <string>
+#include <memory>
 
 class Lexer
 {
 public:
-    static constexpr int MAX_LITERAL_SIZE = 24;
+    static constexpr int MAX_LITERAL_LENGTH = 24;
     static constexpr int NUMBER_OF_KEYWORDS = 13;
     static constexpr int MAX_KEYWORD_LENGTH = 9;
-    struct Literal : public std::array<char, MAX_LITERAL_SIZE>
-    {
-        Literal()
-        {
-            std::memset(data(), 0, MAX_LITERAL_SIZE);
-        }
-
-        Literal(const char *str)
-        {
-            std::memset(data(), 0, MAX_LITERAL_SIZE);
-            std::strncpy(data(), str, MAX_LITERAL_SIZE -1);
-        }
-    };
 
     enum Symbol : char
     {
@@ -35,31 +21,77 @@ public:
         semicolon_symbol = ';', colon_symbol = ','
     };
 
+    struct TokenValue
+    {
+        virtual ~TokenValue() {}
+    };
+
+    struct TokenValueInt : public TokenValue
+    {
+        TokenValueInt(int i) : number(i) {}
+        int number;
+    };
+
+    struct TokenValueFloat : public TokenValue
+    {
+        TokenValueFloat(float f) : number(f) {}
+        float number;
+    };
+
+    struct TokenValueString : public TokenValue
+    {
+        TokenValueString(std::string s) : string(s) {}
+        std::string string;
+    };
+
+    class Token
+    {
+        friend class Lexer;
+    public:
+        Token(const Source::Position &begin);
+        Symbol getSymbol() const;
+        const Source::Position &getPositionBegin() const;
+        const Source::Position &getPositionEnd() const;
+        int getInt() const;
+        float getFloat() const;
+        const std::string &getLiteral() const;
+    private:
+        Source::Position positionBegin;
+        Source::Position positionEnd;
+        Symbol symbol;
+        std::unique_ptr<TokenValue> value;
+    };
+
+    using TokenPtr = std::unique_ptr<Token>;
+
     Lexer(Source &source);
-    Symbol getNextToken();
-    Literal getLastReadLiteral() const; // return by VALUE (it is just 16 bytes)
-    int getLastReadInt() const;
-    float getLastReadFloat() const;
-    const Source& getSource() const;
+    const Source &getSource() const;
+    TokenPtr getNextToken();
 
 private:
     Source &src;
-    Literal lastReadLiteral;
-    int lastReadInt;
-    float lastReadFloat;
-    char c; // last read character, one AFTER last returned token
+    TokenPtr token;
 
     struct Keyword
     {
         Symbol keyword;
-        Literal string;
+        std::string string;
     };
 
     static const Keyword keywordHashTable[NUMBER_OF_KEYWORDS];
 
-    Symbol getNextTokenInternalSwitch();
-    Symbol readNumber(bool isnegative);
-    Symbol readFloat(long long unsigned integer_part, bool isnegative);
-    Symbol readWord();
-    Symbol readLiteral(Literal &str);
+    void skipWhitespaceAndComments();
+    bool skipWhitespace();
+    bool skipComment();
+    void createNewToken();
+    TokenPtr releaseToken(Symbol token_type);
+    TokenPtr readOneCharacterSymbol();
+    TokenPtr readProductionOperatorOrNumber();
+    TokenPtr readEndOfText();
+    TokenPtr readWordOrNumber();
+    TokenPtr readNumber(bool isnegative);
+    TokenPtr readNumberStartingWith0(bool isnegative);
+    TokenPtr readFloat(long long unsigned integer_part, bool isnegative);
+    TokenPtr readWord();
+    TokenPtr readLiteral();
 };

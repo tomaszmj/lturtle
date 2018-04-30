@@ -8,7 +8,7 @@ class Exception : public std::exception
 {
 public:
     Exception(std::string &&message);
-    virtual const char* what() const noexcept;
+    virtual const char *what() const noexcept;
 protected:
     std::string msg;
 };

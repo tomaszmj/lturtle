@@ -2,36 +2,26 @@
 #include "source.h"
 #include "exception.h"
 #include <iostream>
+#include <memory>
 
-std::ostream& operator<<(std::ostream &os, Lexer::Symbol token);
+std::ostream& operator<<(std::ostream &os, const Lexer::TokenPtr &token);
 
 int main(int argc, char **argv)
 {
+    (void) argc;
+    (void) argv;
     std::ios_base::sync_with_stdio(false); // see: https://stackoverflow.com/questions/9371238/why-is-reading-lines-from-stdin-much-slower-in-c-than-python?rq=1
-    if(argc != 2)
-    {
-        std::cout << "Usage: " << argv[0] << " <program file>\n";
-        return -1;
-    }
     try
     {
-        Source src(argv[1]);
+        Source src(std::cin);
         Lexer lex(src);
         std::cout << "Found tokens:\n";
-        Lexer::Symbol sym;
+        Lexer::TokenPtr token;
         do
         {
-            sym = lex.getNextToken();
-            std::cout << sym;
-            if(sym == Lexer::literal)
-                std::cout << " (" << lex.getLastReadLiteral().data() << ")\n";
-            else if(sym == Lexer::int_number)
-                std::cout << " (" << lex.getLastReadInt() << ")\n";
-            else if(sym == Lexer::float_number)
-                std::cout << " (" << lex.getLastReadFloat() << ")\n";
-            else
-                std::cout << "\n";
-        } while(sym != Lexer::end_of_text && sym != Lexer::error);
+            token = lex.getNextToken();
+            std::cout << token;
+        } while(token->getSymbol() != Lexer::end_of_text && token->getSymbol() != Lexer::error);
         return 0;
     }
     catch(const Exception &ex)
@@ -41,9 +31,9 @@ int main(int argc, char **argv)
     }
 }
 
-std::ostream& operator<<(std::ostream &os, Lexer::Symbol token)
+std::ostream& operator<<(std::ostream &os, const Lexer::TokenPtr &token)
 {
-    switch(token)
+    switch(token->getSymbol())
     {
         case Lexer::error: os << "error"; break;
         case Lexer::end_of_text: os << "end_of_text"; break;
@@ -72,7 +62,15 @@ std::ostream& operator<<(std::ostream &os, Lexer::Symbol token)
         case Lexer::r_round_bracket_symbol: os << "r_round_bracket_symbol"; break;
         case Lexer::semicolon_symbol: os << "semicolon_symbol"; break;
         case Lexer::colon_symbol: os << "colon_symbol"; break;
-    }
+    }   
+    if(token->getSymbol() == Lexer::literal)
+        std::cout << " (" << token->getLiteral() << ")\n";
+    else if(token->getSymbol() == Lexer::int_number)
+        std::cout << " (" << token->getInt() << ")\n";
+    else if(token->getSymbol() == Lexer::float_number)
+        std::cout << " (" << token->getFloat() << ")\n";
+    else
+        std::cout << "\n";
     return os;
 }
 

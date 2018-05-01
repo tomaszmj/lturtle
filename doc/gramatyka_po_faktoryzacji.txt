@@ -81,4 +81,3 @@ Trzecia wersja - po faktoryzacji - wygląda na to, że gramatyka jest regularna 
 17: PensizeSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
 18: ScaleSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
 19: PushstateSt' = l_round_bracket_symbol r_round_bracket_symbol
-11: ForwardSt' = l_round_bracket_symbol float_number r_round_bracket_symbol

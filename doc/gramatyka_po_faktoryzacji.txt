@@ -65,7 +65,7 @@ Trzecia wersja - po faktoryzacji - wygląda na to, że gramatyka jest regularna 
 5: Production' = LiteralsString
 6: OperationOrEvaluation = l_curly_bracket_symbol Operation' | evaluate_keyword Evaluation'
 7: Operation' = { TurtleStatement semicolon_symbol } r_curly_bracket_symbol
-8: evaluaton' = l_round_bracket_symbol int_number semicolon_symbol LiteralString l_round_bracket_symbol
+8: Evaluaton' = l_round_bracket_symbol int_number semicolon_symbol LiteralString l_round_bracket_symbol
 9: LiteralString = { literal plus_symbol } literal
 10: TurtleStatement = forward_keyword ForwardSt' | rotate_keyword RotateSt' |
                       penup_keyword PenupSt' | pendown_keyword PendownSt' |

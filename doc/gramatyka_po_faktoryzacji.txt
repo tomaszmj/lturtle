@@ -1,0 +1,84 @@
+Pierwsz wersja (skopiowana z dokumentacji wstępnej, nieuwzględniające istnienia leksera - gramatyka opisuje m.in. literały i liczby):
+1: program = { statement ";" }
+2: statement = definition | execution
+3: definition = redefinition | createDefinition
+4: execution = literalExecution | turtleStatement
+5: literalExecution = "execute" "(" literalString ")"
+6: redefinition = "redefine" createDefinition
+7: createDefinition = operation | production | evaluation
+8: literalString = literal | literal "+" literalString
+9: operation = literal "=" "{" { turtleStatement ";" } "}"
+10: production = literal "->" literalString
+11: evaluation = literal "=" "evaluate" "(" int
+12:              "," literalsString ")
+13: literal = letter { letter | "_" | digit }
+14: turtleStatement = forwardSt | rotateSt | penupSt | pendownSt  
+15:                   | pencolourSt | gotoSt | pensizeSt
+16:                   | scaleSt | pushstateSt | popstateSt
+17: forwardSt = "forward" "(" float ")"
+18: rotateSt = "rotate" "(" float ")"
+19: penupSt = "penup" "(" ")"
+20: pendownSt = "pendown" "(" ")"
+21: pencolourSt = "pencolour" "(" int "," "int" "," "int" ")"
+22: gotoSt = "goto" "(" float "," float ")"
+23: pensizeSt = "pensize" "(" float ")"
+24: scaleSt = "scale" "(" float ")"
+25: pushstateSt = "pushstate" "(" ")"
+26: popstateSt = "popstate" "(" ")"
+27: int = "0" | negativeInt | positiveInt 
+28: letter = "a".."z" | "A".."Z"
+29: negativeInt = "-" positiveInt
+30: positiveInt = nonzeroDigit { digit }
+31: nonzeroDigit = "1".."9"
+32: digit = "0".."1"
+33: float = int | int "." { digit }
+
+Druga wersja - zamieniono rekurencję na iterację w definicji LiteralString, zmieniono konkwencję nazewnictwa (symbole terminalne zaczynają się małą literą, zgodnie z tym, co zwraca lekser, symbole nieterminalne CamelCase):
+1: Program = { Statement semicolon_symbol } end_of_text
+2: Statement = Definition | Execution
+3: Definition = Redefinition | CreateDefinition
+4: Execution = LiteralExecution | TurtleStatement
+5: LiteralExecution = execute_keyword l_round_bracket_symbol LiteralString r_round_bracket_symbol
+6: Redefinition = redefine_keyword CreateDefinition
+7: CreateDefinition = Operation | Production | Evaluation
+8: LiteralString = { literal plus_symbol } literal
+9: Operation = literal equals_symbol l_curly_bracket_symobl { TurtleStatement semicolon_symbol } r_curly_bracket_symbol
+10: Production = literal production_operator LiteralString
+11: Evaluation = literal equals_symbol evaluate_keyword l_round_bracket_symbol int_number semicolon_symbol literalsString l_round_bracket_symbol
+12: TurtleStatement = ForwardSt | RotateSt | PenupSt | PendownSt  | PencolourSt | GotoSt | PensizeSt | ScaleSt | PushstateSt | PopstateSt
+13: ForwardSt = forward_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
+14: RotateSt = rotate_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
+15: PenupSt = penup_keyword l_round_bracket_symbol r_round_bracket_symbol
+16: PendownSt = pendown_keyword l_round_bracket_symbol r_round_bracket_symbol
+17: PencolourSt = pencolour_keyword l_round_bracket_symbol int_number semicolon_symbol int_number semicolon_symbol int_number r_round_bracket_symbol
+18: GotoSt = goto_keyword l_round_bracket_symbol float_number semicolon_symbol float_number r_round_bracket_symbol
+19: PensizeSt = pensize_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
+20: ScaleSt = scale_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
+21: PushstateSt = pushstate_keyword l_round_bracket_symbol r_round_bracket_symbol
+22: PopstateSt = popstate_keyword l_round_bracket_symbol r_round_bracket_symbol
+
+Trzecia wersja - po faktoryzacji - wygląda na to, że gramatyka jest regularna (w produkcji 2 dla uproszczenia zapisu zostawiłem symbol nieterminalny TurtleStatement):
+1: Program = { Statement semicolon_symbol } end_of_text
+2: Statement = redefine_keyword Redefinition' | literal OperationOrProductionOrEvaluation | TurtleStatement
+3: Redefiniton' = literal OperationOrProductionOrEvaluation
+4: OperationOrProductionOrEvaluation = production_operator Production' | equals_symbol OperationOrEvaluation
+5: Production' = literalsString
+6: OperationOrEvaluation = l_curly_bracket_symbol Operation' | evaluate_keyword Evaluation'
+7: Operation' = { TurtleStatement semicolon_symbol } r_curly_bracket_symbol
+8: evaluaton' = l_round_bracket_symbol int_number semicolon_symbol literalsString l_round_bracket_symbol
+9: LiteralString = { literal plus_symbol } literal
+10: TurtleStatement = forward_keyword ForwardSt' | rotate_keyword RotateSt' |
+                      penup_keyword PenupSt' | pendown_keyword PendownSt' |
+                      pencolour_keyword PencolourSt' | goto_keyword GotoSt' |
+                      pensize_keyword PensizeSt' | scale_keyword ScaleSt' |
+                      pushstate_keyword PushstateSt' | popstate_keyword PopstateSt'
+11: ForwardSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
+12: RotateSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
+13: PenupSt' = l_round_bracket_symbol r_round_bracket_symbol
+14: PendownSt' = l_round_bracket_symbol r_round_bracket_symbol
+15: PencolourSt' = l_round_bracket_symbol int_number semicolon_symbol int_number semicolon_symbol int_number r_round_bracket_symbol
+16: GotoSt' = l_round_bracket_symbol float_number semicolon_symbol float_number r_round_bracket_symbol
+17: PensizeSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
+18: ScaleSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
+19: PushstateSt' = l_round_bracket_symbol r_round_bracket_symbol
+11: ForwardSt' = l_round_bracket_symbol float_number r_round_bracket_symbol

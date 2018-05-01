@@ -111,7 +111,7 @@ literalString = literal | literal "+" literalString
 operation = literal "=" "{" { turtleStatement ";" } "}"
 production = literal "->" literalString
 evaluation = literal "=" "evaluate" "(" int
-             "," literalsString ")
+             "," literalString ")
 literal = letter { letter | "_" | digit }
 turtleStatement = forwardSt | rotateSt | penupSt | pendownSt  
                   | pencolourSt | gotoSt | pensizeSt

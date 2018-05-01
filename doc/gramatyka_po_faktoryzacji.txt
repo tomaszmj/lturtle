@@ -10,7 +10,7 @@ Pierwsz wersja (skopiowana z dokumentacji wstępnej, nieuwzględniające istnien
 9: operation = literal "=" "{" { turtleStatement ";" } "}"
 10: production = literal "->" literalString
 11: evaluation = literal "=" "evaluate" "(" int
-12:              "," literalsString ")
+12:              "," literalString ")
 13: literal = letter { letter | "_" | digit }
 14: turtleStatement = forwardSt | rotateSt | penupSt | pendownSt  
 15:                   | pencolourSt | gotoSt | pensizeSt
@@ -44,7 +44,7 @@ Druga wersja - zamieniono rekurencję na iterację w definicji LiteralString, zm
 8: LiteralString = { literal plus_symbol } literal
 9: Operation = literal equals_symbol l_curly_bracket_symobl { TurtleStatement semicolon_symbol } r_curly_bracket_symbol
 10: Production = literal production_operator LiteralString
-11: Evaluation = literal equals_symbol evaluate_keyword l_round_bracket_symbol int_number semicolon_symbol literalsString l_round_bracket_symbol
+11: Evaluation = literal equals_symbol evaluate_keyword l_round_bracket_symbol int_number semicolon_symbol LiteralsString l_round_bracket_symbol
 12: TurtleStatement = ForwardSt | RotateSt | PenupSt | PendownSt  | PencolourSt | GotoSt | PensizeSt | ScaleSt | PushstateSt | PopstateSt
 13: ForwardSt = forward_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
 14: RotateSt = rotate_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
@@ -62,10 +62,10 @@ Trzecia wersja - po faktoryzacji - wygląda na to, że gramatyka jest regularna 
 2: Statement = redefine_keyword Redefinition' | literal OperationOrProductionOrEvaluation | TurtleStatement
 3: Redefiniton' = literal OperationOrProductionOrEvaluation
 4: OperationOrProductionOrEvaluation = production_operator Production' | equals_symbol OperationOrEvaluation
-5: Production' = literalsString
+5: Production' = LiteralsString
 6: OperationOrEvaluation = l_curly_bracket_symbol Operation' | evaluate_keyword Evaluation'
 7: Operation' = { TurtleStatement semicolon_symbol } r_curly_bracket_symbol
-8: evaluaton' = l_round_bracket_symbol int_number semicolon_symbol literalsString l_round_bracket_symbol
+8: evaluaton' = l_round_bracket_symbol int_number semicolon_symbol LiteralString l_round_bracket_symbol
 9: LiteralString = { literal plus_symbol } literal
 10: TurtleStatement = forward_keyword ForwardSt' | rotate_keyword RotateSt' |
                       penup_keyword PenupSt' | pendown_keyword PendownSt' |

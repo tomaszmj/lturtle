@@ -57,28 +57,30 @@ Druga wersja - zamieniono rekurencję na iterację w definicji LiteralString, zm
 21: PushstateSt = pushstate_keyword l_round_bracket_symbol r_round_bracket_symbol
 22: PopstateSt = popstate_keyword l_round_bracket_symbol r_round_bracket_symbol
 
-Trzecia wersja - po faktoryzacji - wygląda na to, że gramatyka jest regularna (w produkcji 2 dla uproszczenia zapisu zostawiłem symbol nieterminalny TurtleStatement):
+Trzecia wersja - po faktoryzacji - wygląda na to, że gramatyka jest regularna (w produkcji 2 dla uproszczenia zapisu zostawiłem symbol nieterminalny):
 1: Program = { Statement semicolon_symbol } end_of_text
-2: Statement = redefine_keyword Redefinition' | literal OperationOrProductionOrEvaluation | TurtleStatement
-3: Redefiniton' = literal OperationOrProductionOrEvaluation
-4: OperationOrProductionOrEvaluation = production_operator Production' | equals_symbol OperationOrEvaluation
-5: Production' = LiteralsString
-6: OperationOrEvaluation = l_curly_bracket_symbol Operation' | evaluate_keyword Evaluation'
-7: Operation' = { TurtleStatement semicolon_symbol } r_curly_bracket_symbol
-8: Evaluaton' = l_round_bracket_symbol int_number semicolon_symbol LiteralString l_round_bracket_symbol
-9: LiteralString = { literal plus_symbol } literal
-10: TurtleStatement = forward_keyword ForwardSt' | rotate_keyword RotateSt' |
-                      penup_keyword PenupSt' | pendown_keyword PendownSt' |
-                      pencolour_keyword PencolourSt' | goto_keyword GotoSt' |
-                      pensize_keyword PensizeSt' | scale_keyword ScaleSt' |
-                      pushstate_keyword PushstateSt' | popstate_keyword PopstateSt'
-11: ForwardSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
-12: RotateSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
-13: PenupSt' = l_round_bracket_symbol r_round_bracket_symbol
-14: PendownSt' = l_round_bracket_symbol r_round_bracket_symbol
-15: PencolourSt' = l_round_bracket_symbol int_number semicolon_symbol int_number semicolon_symbol int_number r_round_bracket_symbol
-16: GotoSt' = l_round_bracket_symbol float_number semicolon_symbol float_number r_round_bracket_symbol
-17: PensizeSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
-18: ScaleSt' = l_round_bracket_symbol float_number r_round_bracket_symbol
-19: PushstateSt' = l_round_bracket_symbol r_round_bracket_symbol
-20: PopstateSt' = l_round_bracket_symbol r_round_bracket_symbol
+2: Statement = redefine_keyword Redefinition | literal Definition | execute_keyword LiteralExecution | TurtleStatementExecution
+3: Redefiniton = literal Definition
+4: Definition = production_operator Production | equals_symbol OperationOrEvaluation
+5: LiteralExecution = l_round_bracket_symbol LiteralString r_round_bracket_symbol
+6: TurtleStatementExecution = TurtleOperation 
+7: Production = LiteralsString
+8: OperationOrEvaluation = l_curly_bracket_symbol Operation | evaluate_keyword Evaluation
+9: Operation = { TurtleOperation semicolon_symbol } r_curly_bracket_symbol
+10: Evaluaton = l_round_bracket_symbol int_number semicolon_symbol LiteralString l_round_bracket_symbol
+11: LiteralString = { literal plus_symbol } literal
+12: TurtleOperation = forward_keyword ForwardSt | rotate_keyword RotateSt |
+                      penup_keyword PenupSt | pendown_keyword PendownSt |
+                      pencolour_keyword PencolourSt | goto_keyword GotoSt |
+                      pensize_keyword PensizeSt | scale_keyword ScaleSt |
+                      pushstate_keyword PushstateSt | popstate_keyword PopstateSt
+13: ForwardSt = l_round_bracket_symbol float_number r_round_bracket_symbol
+14: RotateSt = l_round_bracket_symbol float_number r_round_bracket_symbol
+15: PenupSt = l_round_bracket_symbol r_round_bracket_symbol
+16: PendownSt = l_round_bracket_symbol r_round_bracket_symbol
+17: PencolourSt = l_round_bracket_symbol int_number semicolon_symbol int_number semicolon_symbol int_number r_round_bracket_symbol
+18: GotoSt = l_round_bracket_symbol float_number semicolon_symbol float_number r_round_bracket_symbol
+19: PensizeSt = l_round_bracket_symbol float_number r_round_bracket_symbol
+20: ScaleSt = l_round_bracket_symbol float_number r_round_bracket_symbol
+21: PushstateSt = l_round_bracket_symbol r_round_bracket_symbol
+22: PopstateSt = l_round_bracket_symbol r_round_bracket_symbol

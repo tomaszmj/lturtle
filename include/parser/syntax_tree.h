@@ -27,23 +27,28 @@ struct Operation : public LiteralDefinition
 
 struct Production : public LiteralDefinition
 {
-    std::vector<std::unique_ptr<Token>> literals;
+    std::unique_ptr<LiteralString> literals;
 };
 
 struct Evaluation: public LiteralDefinition
 {
     std::unique_ptr<Token> intNumber;
-    std::vector<std::unique_ptr<Token>> literals;
+    std::unique_ptr<LiteralString> literals;
 };
 
 struct LiteralExecution : public Statement
 {
-    std::vector<std::unique_ptr<Token>> literals;
+    std::unique_ptr<LiteralString> literals;
 };
 
-struct TurtleStatementExecution : public Statement, public TurtleOperation
+struct TurtleOperationExecution : public Statement, public TurtleOperation
 {
 
+};
+
+struct LiteralString
+{
+    std::vector<std::unique_ptr<Token>> literals;
 };
 
 struct TurtleOperation

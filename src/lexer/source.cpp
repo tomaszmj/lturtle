@@ -9,6 +9,11 @@ Source::Position::Position(const Source::Position &p)
     : line(p.line), inLine(p.inLine), inFile(p.inFile)
 {}
 
+std::string Source::Position::toString() const
+{
+    return "line " + std::to_string(line) + ", position " + std::to_string(inLine);
+}
+
 Source::Source(std::istream &is)
     : input(is)
 {}

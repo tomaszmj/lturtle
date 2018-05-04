@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include "source.h"
+#include "parser.h"
 #include "exception.h"
 #include <iostream>
 #include <memory>
@@ -15,13 +16,17 @@ int main(int argc, char **argv)
     {
         Source src(std::cin);
         Lexer lex(src);
-        std::cout << "Found tokens:\n";
-        Lexer::TokenPtr token;
-        do
-        {
-            token = lex.getNextToken();
-            std::cout << token;
-        } while(token->getSymbol() != Token::end_of_text && token->getSymbol() != Token::error);
+        Parser parser(lex);
+        auto program = parser.parseProgram();
+        for(const auto &statement : program->statements)
+            std::cout << statement->toString() << "\n";
+//        std::cout << "Found tokens:\n";
+//        Lexer::TokenPtr token;
+//        do
+//        {
+//            token = lex.getNextToken();
+//            std::cout << token;
+//        } while(token->getSymbol() != Token::end_of_text && token->getSymbol() != Token::error);
         return 0;
     }
     catch(const Exception &ex)
@@ -73,4 +78,3 @@ std::ostream& operator<<(std::ostream &os, const Lexer::TokenPtr &token)
         std::cout << "\n";
     return os;
 }
-

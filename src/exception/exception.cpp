@@ -12,6 +12,9 @@ const char *Exception::what() const noexcept
 }
 
 LexerException::LexerException(const Lexer &lex, std::string &&msg)
-    : Exception("Lexer error (line " + std::to_string(lex.getSource().getPosition().line) +
-                ", position " + std::to_string(lex.getSource().getPosition().inLine) + "): " + msg)
+    : Exception("Lexer error (" + lex.getSource().getPosition().toString() + ": " + msg)
+{}
+
+ParserException::ParserException(std::string &&message)
+    : Exception("Parser error: " + message)
 {}

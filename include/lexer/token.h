@@ -21,24 +21,31 @@ public:
     struct Value
     {
         virtual ~Value() {}
+        virtual std::string toString() const = 0;
     };
 
     struct ValueInt : public Value
     {
-        ValueInt(int i) : number(i) {}
         int number;
+
+        ValueInt(int i) : number(i) {}
+        virtual std::string toString() const { return std::to_string(number); }
     };
 
     struct ValueFloat : public Value
     {
-        ValueFloat(float f) : number(f) {}
         float number;
+
+        ValueFloat(float f) : number(f) {}
+        virtual std::string toString() const { return std::to_string(number); }
     };
 
     struct ValueString : public Value
     {
-        ValueString(std::string s) : string(s) {}
         std::string string;
+
+        ValueString(std::string s) : string(s) {}
+        virtual std::string toString() const { return string; }
     };
 
     Token(const Source::Position &begin);
@@ -48,6 +55,8 @@ public:
     int getInt() const;
     float getFloat() const;
     const std::string &getLiteral() const;
+    std::string toString() const;
+    static std::string typeToString(Symbol s);
 
 private:
     Source::Position positionBegin;

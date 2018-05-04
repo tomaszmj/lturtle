@@ -12,6 +12,7 @@ public:
 
         Position();
         Position(const Position &p);
+        std::string toString() const;
     };
 
     Source(std::istream &is);

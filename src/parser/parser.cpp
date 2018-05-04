@@ -34,7 +34,7 @@ void Parser::nextToken()
 void Parser::consume(Token::Symbol token_type)
 {
     if(currentToken->getSymbol() != token_type)
-        throw Exception("Unexpected token... TODO"); // in this situation parser can 'ignore' the lack of expected token
+        error("expected token " + Token::typeToString(token_type)); // in this situation parser can 'ignore' the lack of expected token
     nextToken();
 }
 
@@ -42,10 +42,17 @@ void Parser::consume(Token::Symbol token_type)
 std::unique_ptr<Token> Parser::accept(Token::Symbol token_type)
 {
     if(currentToken->getSymbol() != token_type)
-        throw Exception("Unexpected token... TODO"); // in this situation parser can NOT 'ignore' the lack of expected token
+        error("expected token " + Token::typeToString(token_type)); // in this situation parser can NOT 'ignore' the lack of expected token
     std::unique_ptr<Token> retval = std::move(currentToken);
     nextToken();
     return std::move(retval);
+}
+
+void Parser::error(std::string &&msg)
+{
+    throw ParserException("at token '" + currentToken->toString() + "' (from " +
+        currentToken->getPositionBegin().toString() + " to " +
+        currentToken->getPositionEnd().toString() + "): " + msg);
 }
 
 
@@ -89,7 +96,7 @@ std::unique_ptr<Definition> Parser::parseDefinition()
         retval = parseOperationOrEvaluation();
     }
     else
-        throw Exception("Syntax error... TODO");
+        error("expected '=' or '->' after literal in definition");
     retval->literal = std::move(literal);
     retval->canRedefine = false;
     return std::move(retval);
@@ -107,7 +114,7 @@ std::unique_ptr<LiteralExecution> Parser::parseLiteralExecution()
 std::unique_ptr<TurtleOperationExecution> Parser::parseTurtleOperationExecution()
 {
     std::unique_ptr<TurtleOperationExecution> retval(new TurtleOperationExecution);
-    retval->operation = parseTurtleOperation();
+    retval->turtleOperation = parseTurtleOperation();
     return std::move(retval);
 }
 
@@ -130,8 +137,8 @@ std::unique_ptr<Definition> Parser::parseOperationOrEvaluation()
         nextToken();
         return parseEvaluation();
     }
-    else
-        throw Exception("Syntax error... TODO");
+    error("expected '{' and turtle operations or 'evaluate' and evaluation arguments");
+    throw; // unreachable code to suppress compiler warning - function error throws
 }
 
 std::unique_ptr<Operation> Parser::parseOperation()
@@ -195,8 +202,9 @@ std::unique_ptr<TurtleOperation> Parser::parseTurtleOperation()
         case Token::popstate_keyword:
             return parseTurtleOperationArguments(TurtleOperation::popstate_operation, "");
         default:
-            throw Exception("Syntax error... TODO");
+            error("expected one of turtle operation keywords");
     }
+    throw; // unreachable code to suppress compiler warning - function error throws
 }
 
 std::unique_ptr<TurtleOperation> Parser::parseTurtleOperationArguments(

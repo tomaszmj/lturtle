@@ -46,3 +46,95 @@ const std::string &Token::getLiteral() const
 #endif
     return reinterpret_cast<ValueString*>(value.get())->string;
 }
+
+std::string Token::toString() const
+{
+    switch(symbol)
+    {
+        case error:
+            return "error";
+        case end_of_text:
+            return "end_of_text";
+        case int_number:
+        case float_number:
+        case literal:
+            return value->toString();
+        case forward_keyword:
+            return "forward";
+        case rotate_keyword:
+            return "rotate";
+        case penup_keyword:
+            return "penup";
+        case pendown_keyword:
+            return "pendown";
+        case pencolour_keyword:
+            return "pencolour";
+        case goto_keyword:
+            return "goto";
+        case pensize_keyword:
+            return "pensize";
+        case scale_keyword:
+            return "scale";
+        case pushstate_keyword:
+            return "pushstate";
+        case popstate_keyword:
+            return "popstate";
+        case evaluate_keyword:
+            return "evaluate";
+        case execute_keyword:
+            return "execute";
+        case redefine_keyword:
+            return "redefine";
+        case production_operator:
+            return "->";
+        default:
+            return std::string(1, symbol);
+    }
+}
+
+std::string Token::typeToString(Token::Symbol s)
+{
+    switch(s)
+    {
+        case error:
+            return "error";
+        case end_of_text:
+            return "end_of_text";
+        case int_number:
+            return "int";
+        case float_number:
+            return "float";
+        case literal:
+            return "literal";
+        case forward_keyword:
+            return "'forward'";
+        case rotate_keyword:
+            return "'rotate'";
+        case penup_keyword:
+            return "'penup'";
+        case pendown_keyword:
+            return "'pendown'";
+        case pencolour_keyword:
+            return "'pencolour'";
+        case goto_keyword:
+            return "'goto'";
+        case pensize_keyword:
+            return "'pensize'";
+        case scale_keyword:
+            return "'scale'";
+        case pushstate_keyword:
+            return "'pushstate'";
+        case popstate_keyword:
+            return "'popstate'";
+        case evaluate_keyword:
+            return "'evaluate'";
+        case execute_keyword:
+            return "'execute'";
+        case redefine_keyword:
+            return "'redefine'";
+        case production_operator:
+            return "'->'";
+        default:
+            return "'" + std::string(1, s) + "'";
+    }
+}

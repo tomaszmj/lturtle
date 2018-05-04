@@ -19,6 +19,7 @@ private:
     void nextToken();
     void consume(Token::Symbol token_type);
     std::unique_ptr<Token> accept(Token::Symbol token_type);
+    void error(std::string &&msg);
 
     std::unique_ptr<Statement> parseStatement();
     std::unique_ptr<Definition> parseRedefinition();

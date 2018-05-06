@@ -6,6 +6,8 @@
 #include <memory>
 
 std::ostream& operator<<(std::ostream &os, const Lexer::TokenPtr &token);
+void lexer();
+void parser();
 
 int main(int argc, char **argv)
 {
@@ -14,19 +16,8 @@ int main(int argc, char **argv)
     std::ios_base::sync_with_stdio(false); // see: https://stackoverflow.com/questions/9371238/why-is-reading-lines-from-stdin-much-slower-in-c-than-python?rq=1
     try
     {
-        Source src(std::cin);
-        Lexer lex(src);
-        Parser parser(lex);
-        auto program = parser.parseProgram();
-        std::cout << program->toString();
-//        std::cout << "Found tokens:\n";
-//        Lexer::TokenPtr token;
-//        do
-//        {
-//            token = lex.getNextToken();
-//            std::cout << token;
-//        } while(token->getSymbol() != Token::end_of_text && token->getSymbol() != Token::error);
-//        return 0;
+        parser();
+        return 0;
     }
     catch(const Exception &ex)
     {
@@ -76,4 +67,26 @@ std::ostream& operator<<(std::ostream &os, const Lexer::TokenPtr &token)
     else
         std::cout << "\n";
     return os;
+}
+
+void lexer()
+{
+    Source src(std::cin);
+    Lexer lex(src);
+    std::cout << "Found tokens:\n";
+    Lexer::TokenPtr token;
+    do
+    {
+        token = lex.getNextToken();
+        std::cout << token;
+    } while(token->getSymbol() != Token::end_of_text && token->getSymbol() != Token::error);
+}
+
+void parser()
+{
+    Source src(std::cin);
+    Lexer lex(src);
+    Parser parser(lex);
+    auto program = parser.parseProgram();
+    std::cout << program->toString();
 }

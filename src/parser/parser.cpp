@@ -69,7 +69,6 @@ void Parser::error(std::string &&msg)
         currentToken->getPositionEnd().toString() + "): " + msg);
 }
 
-
 std::unique_ptr<Statement> Parser::parseStatement()
 {
     switch(currentToken->getSymbol())
@@ -110,7 +109,7 @@ std::unique_ptr<Definition> Parser::parseDefinition()
         retval = parseOperationOrEvaluation();
     }
     else
-        error("expected '=' or '->' after literal in definition");
+        error("expected '=' or '->' after literal '" + literal->toString() + "'");
     retval->literal = std::move(literal);
     retval->canRedefine = false;
     return std::move(retval);

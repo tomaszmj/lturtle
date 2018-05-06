@@ -14,6 +14,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${DEFAULT_FLAGS} -Werror
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} src/main/main.cpp)
 add_executable(lexer_tests ${SOURCES} ${HEADERS} src/tests/test_lexer.cpp)
+add_executable(parser_tests ${SOURCES} ${HEADERS} src/tests/test_parser.cpp)
 
 target_link_libraries(lexer_tests ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
+target_link_libraries(parser_tests ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)

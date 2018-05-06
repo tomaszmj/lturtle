@@ -18,8 +18,7 @@ int main(int argc, char **argv)
         Lexer lex(src);
         Parser parser(lex);
         auto program = parser.parseProgram();
-        for(const auto &statement : program->statements)
-            std::cout << statement->toString() << "\n";
+        std::cout << program->toString();
 //        std::cout << "Found tokens:\n";
 //        Lexer::TokenPtr token;
 //        do
@@ -27,7 +26,7 @@ int main(int argc, char **argv)
 //            token = lex.getNextToken();
 //            std::cout << token;
 //        } while(token->getSymbol() != Token::end_of_text && token->getSymbol() != Token::error);
-        return 0;
+//        return 0;
     }
     catch(const Exception &ex)
     {

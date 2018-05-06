@@ -149,6 +149,7 @@ std::unique_ptr<Operation> Parser::parseOperation()
         retval->turtleOperations.push_back(parseTurtleOperation());
         consume(Token::semicolon_symbol);
     }
+    nextToken(); // r_curly_bracket_symbol consumed
     return std::move(retval);
 }
 
@@ -159,7 +160,7 @@ std::unique_ptr<Evaluation> Parser::parseEvaluation()
     retval->intNumber = accept(Token::int_number);
     consume(Token::colon_symbol);
     retval->literals = parseLiteralString();
-    consume(Token::l_round_bracket_symbol);
+    consume(Token::r_round_bracket_symbol);
     return std::move(retval);
 }
 

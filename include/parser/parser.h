@@ -11,6 +11,7 @@ public:
     Parser(Lexer &lex);
     const Lexer &getLexer();
     std::unique_ptr<Program> parseProgram();
+    std::unique_ptr<Statement> parseStatement(); // Statements can be parsed individually (instead of parsing the whole Program)
 
 private:
     Lexer &lexer;
@@ -21,7 +22,6 @@ private:
     std::unique_ptr<Token> accept(Token::Symbol token_type);
     void error(std::string &&msg);
 
-    std::unique_ptr<Statement> parseStatement();
     std::unique_ptr<Definition> parseRedefinition();
     std::unique_ptr<Definition> parseDefinition();
     std::unique_ptr<LiteralExecution> parseLiteralExecution();

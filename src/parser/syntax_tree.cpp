@@ -1,6 +1,14 @@
 #include "syntax_tree.h"
 #include "token.h"
 
+std::string Program::toString() const
+{
+    std::string retval;
+    for(const auto &statement : statements)
+        retval += statement->toString() + ";\n";
+    return retval;
+}
+
 std::string Definition::toString() const
 {
     if(canRedefine)
@@ -13,29 +21,29 @@ std::string Operation::toString() const
     std::string retval = Definition::toString() + " = { ";
     for(const auto &to : turtleOperations)
         retval += to->toString() + "; ";
-    retval += "};";
+    retval += "}";
     return retval;
 }
 
 std::string Production::toString() const
 {
-    return Definition::toString() + " -> " + literals->toString() + ";\n";
+    return Definition::toString() + " -> " + literals->toString();
 }
 
 std::string Evaluation::toString() const
 {
     return Definition::toString() + " = evaluate( " + std::to_string(intNumber->getInt()) +
-            ", " + literals->toString() + " );\n";
+            ", " + literals->toString() + " )";
 }
 
 std::string LiteralExecution::toString() const
 {
-    return "execute( " + literals->toString() + " );\n";
+    return "execute( " + literals->toString() + " )";
 }
 
 std::string TurtleOperationExecution::toString() const
 {
-    return turtleOperation->toString() + ";\n";
+    return turtleOperation->toString();
 }
 
 std::string LiteralString::toString() const
@@ -55,9 +63,9 @@ std::string TurtleOperation::toString() const
         case TurtleOperation::rotate_operation:
             return "rotate";
         case TurtleOperation::penup_operation:
-            return "penup";
+            return "penup()";
         case TurtleOperation::pendown_operation:
-            return "pendown";
+            return "pendown()";
         case TurtleOperation::pencolour_operation:
             return "pencolour";
         case TurtleOperation::goto_operation:
@@ -67,9 +75,9 @@ std::string TurtleOperation::toString() const
         case TurtleOperation::scale_operation:
             return "scale";
         case TurtleOperation::pushstate_operation:
-            return "pushstate";
+            return "pushstate()";
         case TurtleOperation::popstate_operation:
-            return "popstate";
+            return "popstate()";
     }
     return ""; // impossible (all enum cases exhausted) - suppress compiler warning
 }

@@ -10,6 +10,8 @@ struct TurtleOperation;
 struct Program
 {
     std::vector<std::unique_ptr<Statement>> statements;
+
+    std::string toString() const;
 };
 
 struct Statement

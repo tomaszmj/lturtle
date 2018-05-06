@@ -18,10 +18,33 @@
 BOOST_AUTO_TEST_CASE(parseTurtleOperation)
 {
     const std::string input = R"(
+    forward(1.0);
+    forward(1);
+    rotate(-1.0);
+    penup();
+    pendown();
+    pencolour(255, 0, 0);
+    goto(12.0, -132);
+    pensize(5);
+    scale(10.0);
+    pushstate();
+    popstate();
     )";
     INIT_BOILERPLATE
     auto program = parser.parseProgram();
-    //BOOST_REQUIRE(program->toString() == "");
+    std::string str = program->toString();
+    BOOST_REQUIRE(program->toString() == R"(forward(1.0000);
+forward(1);
+rotate(-1.0000);
+penup();
+pendown();
+pencolour(255, 0, 0);
+goto(12.0000, -132);
+pensize(5);
+scale(10.0000);
+pushstate();
+popstate();
+)");
 }
 
 // parseLiteralString - tested in parseProduction, parseEvaluation and parseLiteralExecution
@@ -33,7 +56,7 @@ BOOST_AUTO_TEST_CASE(parseEvaluation)
     )";
     INIT_BOILERPLATE
     auto st = parser.parseStatement();
-    BOOST_REQUIRE(st->toString() == "x = evaluate( 4, a + bc + d )");
+    BOOST_REQUIRE(st->toString() == "x = evaluate(4, a + bc + d)");
 }
 
 BOOST_AUTO_TEST_CASE(parseEvaluation_redefine)
@@ -43,7 +66,7 @@ BOOST_AUTO_TEST_CASE(parseEvaluation_redefine)
     )";
     INIT_BOILERPLATE
     auto st = parser.parseStatement();
-    BOOST_REQUIRE(st->toString() == "redefine x = evaluate( 4, a + bc + d )");
+    BOOST_REQUIRE(st->toString() == "redefine x = evaluate(4, a + bc + d)");
 }
 
 
@@ -120,7 +143,7 @@ BOOST_AUTO_TEST_CASE(parseLiteralExecution)
     )";
     INIT_BOILERPLATE
     auto st = parser.parseStatement();
-    BOOST_REQUIRE(st->toString() == "execute( x + aa )");
+    BOOST_REQUIRE(st->toString() == "execute(x + aa)");
 }
 
 // parseDefinition - tested in parseDefinition
@@ -130,12 +153,29 @@ BOOST_AUTO_TEST_CASE(parseLiteralExecution)
 BOOST_AUTO_TEST_CASE(parseProgram_example)
 {
     const std::string input = R"(
-    execute(x+aa);
+    s0 =     {   forward(1.0); };  # comment
+    s1 = { forward(2.0); };
+    left = { pushstate(); rotate(-45.0); };
+    right = { popstate(); rotate(45.0); };
+    s1 -> s1 + s1;
+    s0 -> s1 + left + s0 + right + s0;
+    tree3 = evaluate(3, s0);
+    pencolour(0, 255, 0);
+    execute(tree3);
     )";
     INIT_BOILERPLATE
     auto program = parser.parseProgram();
+    std::string str = program->toString();
     BOOST_REQUIRE(program->toString() ==
-R"(execute( x + aa );
+R"(s0 = { forward(1.0000); };
+s1 = { forward(2.0000); };
+left = { pushstate(); rotate(-45.0000); };
+right = { popstate(); rotate(45.0000); };
+s1 -> s1 + s1;
+s0 -> s1 + left + s0 + right + s0;
+tree3 = evaluate(3, s0);
+pencolour(0, 255, 0);
+execute(tree3);
 )");
 }
 

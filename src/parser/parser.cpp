@@ -39,10 +39,24 @@ void Parser::consume(Token::Symbol token_type)
 }
 
 // accept() is called when there is only one expected token, which WILL be used to construct syntax tree
-std::unique_ptr<Token> Parser::accept(Token::Symbol token_type)
+std::unique_ptr<Token> Parser::accept(std::initializer_list<Token::Symbol> token_types)
 {
-    if(currentToken->getSymbol() != token_type)
-        error("expected token " + Token::typeToString(token_type)); // in this situation parser can NOT 'ignore' the lack of expected token
+    bool ok = false;
+    for(auto token : token_types)
+    {
+        if(currentToken->getSymbol() == token)
+        {
+            ok = true;
+            break;
+        }
+    }
+    if(!ok)
+    {
+        std::string msg = "expected token types:";
+        for(auto token : token_types)
+            msg += " " + Token::typeToString(token);
+        error(std::move(msg)); // in this situation parser can NOT 'ignore' the lack of expected token
+    }
     std::unique_ptr<Token> retval = std::move(currentToken);
     nextToken();
     return std::move(retval);
@@ -157,7 +171,7 @@ std::unique_ptr<Evaluation> Parser::parseEvaluation()
 {
     std::unique_ptr<Evaluation> retval(new Evaluation);
     consume(Token::l_round_bracket_symbol);
-    retval->intNumber = accept(Token::int_number);
+    retval->intNumber = accept({Token::int_number});
     consume(Token::colon_symbol);
     retval->literals = parseLiteralString();
     consume(Token::r_round_bracket_symbol);
@@ -167,62 +181,71 @@ std::unique_ptr<Evaluation> Parser::parseEvaluation()
 std::unique_ptr<LiteralString> Parser::parseLiteralString()
 {
     std::unique_ptr<LiteralString> retval(new LiteralString);
-    retval->literals.push_back(accept(Token::literal)); // LiteralString cannot be empty
+    retval->literals.push_back(accept({Token::literal})); // LiteralString cannot be empty
     while(currentToken->getSymbol() == Token::plus_symbol)
     {
         nextToken();
-        retval->literals.push_back(accept(Token::literal));
+        retval->literals.push_back(accept({Token::literal}));
     }
     return std::move(retval);
 }
 
 std::unique_ptr<TurtleOperation> Parser::parseTurtleOperation()
 {
-    std::unique_ptr<Token> tmp_token = std::move(currentToken);
-    nextToken();
-    switch(tmp_token->getSymbol())
+    std::unique_ptr<TurtleOperation> retval(new TurtleOperation);
+    switch(currentToken->getSymbol())
     {
         case Token::forward_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::forward_operation, "f");
+            retval->type = TurtleOperation::forward_operation;
+            break;
         case Token::rotate_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::rotate_operation, "f");
+            retval->type = TurtleOperation::rotate_operation;
+            break;
         case Token::penup_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::penup_operation, "");
+            retval->type = TurtleOperation::penup_operation;
+            break;
         case Token::pendown_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::pendown_operation, "");
+            retval->type = TurtleOperation::pendown_operation;
+            break;
         case Token::pencolour_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::pencolour_operation, "iii");
+            retval->type = TurtleOperation::pencolour_operation;
+            break;
         case Token::goto_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::goto_operation, "ff");
+            retval->type = TurtleOperation::goto_operation;
+            break;
         case Token::pensize_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::pensize_operation, "f");
+            retval->type = TurtleOperation::pensize_operation;
+            break;
         case Token::scale_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::scale_operation, "f");
+            retval->type = TurtleOperation::scale_operation;
+            break;
         case Token::pushstate_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::pushstate_operation, "");
+            retval->type = TurtleOperation::pushstate_operation;
+            break;
         case Token::popstate_keyword:
-            return parseTurtleOperationArguments(TurtleOperation::popstate_operation, "");
+            retval->type = TurtleOperation::popstate_operation;
+            break;
         default:
             error("expected one of turtle operation keywords");
     }
-    throw; // unreachable code to suppress compiler warning - function error throws
+    nextToken();
+    consume(Token::l_round_bracket_symbol);
+    retval->arguments = parseTurtleOperationArguments();
+    consume(Token::r_round_bracket_symbol);
+    return retval;
 }
 
-std::unique_ptr<TurtleOperation> Parser::parseTurtleOperationArguments(
-        TurtleOperation::Type operation_type, const char *arg_types)
+std::unique_ptr<TurtleOperationArguments> Parser::parseTurtleOperationArguments()
 {
-    std::unique_ptr<TurtleOperation> retval(new TurtleOperation);
-    retval->type = operation_type;
-    consume(Token::l_round_bracket_symbol);
-    for(int i = 0; arg_types[i] != 0; ++i) // arg_types is null-terminated string
+    std::unique_ptr<TurtleOperationArguments> retval(new TurtleOperationArguments);
+    if(currentToken->getSymbol() != Token::float_number && currentToken->getSymbol() != Token::int_number)
+        return std::move(retval);
+    retval->numbers.push_back(std::move(currentToken));
+    nextToken();
+    while(currentToken->getSymbol() == Token::colon_symbol)
     {
-        if(arg_types[i] == 'f')
-            retval->arguments[i] = accept(Token::float_number); // retval->arguments[i] will not overflow because i<=2
-        else // arg_types[i] == 'i'
-            retval->arguments[i] = accept(Token::int_number);
-        if(arg_types[i+1] != 0)
-            consume(Token::colon_symbol);
-    }
-    consume(Token::r_round_bracket_symbol);
+        nextToken();
+        retval->numbers.push_back(accept({Token::int_number, Token::float_number}));
+    } 
     return std::move(retval);
 }

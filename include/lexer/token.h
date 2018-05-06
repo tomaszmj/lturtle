@@ -29,7 +29,7 @@ public:
         int number;
 
         ValueInt(int i) : number(i) {}
-        virtual std::string toString() const { return std::to_string(number); }
+        virtual std::string toString() const;
     };
 
     struct ValueFloat : public Value
@@ -37,7 +37,7 @@ public:
         float number;
 
         ValueFloat(float f) : number(f) {}
-        virtual std::string toString() const { return std::to_string(number); }
+        virtual std::string toString() const;
     };
 
     struct ValueString : public Value
@@ -45,7 +45,7 @@ public:
         std::string string;
 
         ValueString(std::string s) : string(s) {}
-        virtual std::string toString() const { return string; }
+        virtual std::string toString() const;
     };
 
     Token(const Source::Position &begin);

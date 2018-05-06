@@ -6,6 +6,7 @@ class Token;
 struct Statement;
 struct LiteralString;
 struct TurtleOperation;
+struct TurtleOperationArguments;
 
 struct Program
 {
@@ -90,7 +91,14 @@ struct TurtleOperation
         pencolour_operation, goto_operation, pensize_operation,
         scale_operation, pushstate_operation, popstate_operation
     } type;
-    std::unique_ptr<Token> arguments[3];
+    std::unique_ptr<TurtleOperationArguments> arguments;
+
+    std::string toString() const;
+};
+
+struct TurtleOperationArguments
+{
+    std::vector<std::unique_ptr<Token>> numbers;
 
     std::string toString() const;
 };

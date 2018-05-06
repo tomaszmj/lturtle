@@ -1,5 +1,7 @@
 #include "token.h"
 #include "exception.h"
+#include <sstream>
+#include <iomanip>
 
 Token::Token(const Source::Position &begin)
     : positionBegin(begin), symbol(error)
@@ -22,29 +24,22 @@ const Source::Position &Token::getPositionEnd() const
 
 int Token::getInt() const
 {
-#ifdef DEBUG
-    if(symbol != int_number)
-        throw Exception("token does not contain int number");
-#endif
-    return reinterpret_cast<ValueInt*>(value.get())->number;
+    return dynamic_cast<ValueInt*>(value.get())->number;
 }
 
 float Token::getFloat() const
 {
-#ifdef DEBUG
-    if(symbol != float_number)
-        throw Exception("token does not contain float number");
-#endif
-    return reinterpret_cast<ValueFloat*>(value.get())->number;
+    if(symbol == int_number)
+    {
+        int tmp = dynamic_cast<ValueInt*>(value.get())->number;
+        return static_cast<float>(tmp);
+    }
+    return dynamic_cast<ValueFloat*>(value.get())->number;
 }
 
 const std::string &Token::getLiteral() const
 {
-#ifdef DEBUG
-    if(symbol != literal)
-        throw Exception("token does not contain literal");
-#endif
-    return reinterpret_cast<ValueString*>(value.get())->string;
+    return dynamic_cast<ValueString*>(value.get())->string;
 }
 
 std::string Token::toString() const
@@ -137,4 +132,21 @@ std::string Token::typeToString(Token::Symbol s)
         default:
             return "'" + std::string(1, s) + "'";
     }
+}
+
+std::string Token::ValueInt::toString() const
+{
+    return std::to_string(number);
+}
+
+std::string Token::ValueFloat::toString() const
+{
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(4) << number; // way of writing floats must be unified to enable testing
+    return ss.str();
+}
+
+std::string Token::ValueString::toString() const
+{
+    return string;
 }

@@ -2,6 +2,7 @@
 #include "syntax_tree.h"
 #include "token.h"
 #include <memory>
+#include <initializer_list>
 
 class Lexer;
 
@@ -19,7 +20,8 @@ private:
 
     void nextToken();
     void consume(Token::Symbol token_type);
-    std::unique_ptr<Token> accept(Token::Symbol token_type);
+
+    std::unique_ptr<Token> accept(std::initializer_list<Token::Symbol> token_types);
     void error(std::string &&msg);
 
     std::unique_ptr<Definition> parseRedefinition();
@@ -32,6 +34,5 @@ private:
     std::unique_ptr<Evaluation> parseEvaluation();
     std::unique_ptr<LiteralString> parseLiteralString();
     std::unique_ptr<TurtleOperation> parseTurtleOperation();
-    std::unique_ptr<TurtleOperation> parseTurtleOperationArguments(
-            TurtleOperation::Type operation_type, const char *arg_types);
+    std::unique_ptr<TurtleOperationArguments> parseTurtleOperationArguments();
 };

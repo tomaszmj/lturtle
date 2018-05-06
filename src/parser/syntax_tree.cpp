@@ -32,13 +32,13 @@ std::string Production::toString() const
 
 std::string Evaluation::toString() const
 {
-    return Definition::toString() + " = evaluate( " + std::to_string(intNumber->getInt()) +
-            ", " + literals->toString() + " )";
+    return Definition::toString() + " = evaluate(" + std::to_string(intNumber->getInt()) +
+            ", " + literals->toString() + ")";
 }
 
 std::string LiteralExecution::toString() const
 {
-    return "execute( " + literals->toString() + " )";
+    return "execute(" + literals->toString() + ")";
 }
 
 std::string TurtleOperationExecution::toString() const
@@ -48,9 +48,9 @@ std::string TurtleOperationExecution::toString() const
 
 std::string LiteralString::toString() const
 {
-    std::string retval = literals[0]->getLiteral();
+    std::string retval = literals[0]->toString();
     for(size_t i = 1; i < literals.size(); ++i)
-        retval += " + " + literals[i]->getLiteral();
+        retval += " + " + literals[i]->toString();
     return retval;
 }
 
@@ -59,25 +59,35 @@ std::string TurtleOperation::toString() const
     switch(type) // will be changed - arguments will also be added to the string
     {
         case TurtleOperation::forward_operation:
-            return "forward";
+            return "forward(" + arguments->toString() + ")";
         case TurtleOperation::rotate_operation:
-            return "rotate";
+            return "rotate(" + arguments->toString() + ")";
         case TurtleOperation::penup_operation:
-            return "penup()";
+            return "penup(" + arguments->toString() + ")";
         case TurtleOperation::pendown_operation:
-            return "pendown()";
+            return "pendown(" + arguments->toString() + ")";
         case TurtleOperation::pencolour_operation:
-            return "pencolour";
+            return "pencolour(" + arguments->toString() + ")";
         case TurtleOperation::goto_operation:
-            return "goto";
+            return "goto(" + arguments->toString() + ")";
         case TurtleOperation::pensize_operation:
-            return "pensize";
+            return "pensize(" + arguments->toString() + ")";
         case TurtleOperation::scale_operation:
-            return "scale";
+            return "scale(" + arguments->toString() + ")";
         case TurtleOperation::pushstate_operation:
-            return "pushstate()";
+            return "pushstate(" + arguments->toString() + ")";
         case TurtleOperation::popstate_operation:
-            return "popstate()";
+            return "popstate(" + arguments->toString() + ")";
     }
     return ""; // impossible (all enum cases exhausted) - suppress compiler warning
+}
+
+std::string TurtleOperationArguments::toString() const
+{
+    if(numbers.empty())
+        return "";
+    std::string retval = numbers[0]->toString();
+    for(size_t i = 1; i < numbers.size(); ++i)
+        retval += ", " + numbers[i]->toString();
+    return retval;
 }

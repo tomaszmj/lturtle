@@ -12,7 +12,8 @@ struct UtmostTurtleCoordinates // needed to initialize DrawingContext, calculate
 class DrawingContext
 {
 public:
-    DrawingContext(const UtmostTurtleCoordinates &coord);
+    DrawingContext();
+    void init(const UtmostTurtleCoordinates &coord);
 };
 
 }

@@ -2,7 +2,12 @@
 
 using namespace semantics_namespace;
 
-DrawingContext::DrawingContext(const UtmostTurtleCoordinates &coord)
+DrawingContext::DrawingContext()
+{
+
+}
+
+void DrawingContext::init(const UtmostTurtleCoordinates &coord)
 {
 
 }

@@ -7,10 +7,12 @@
 #define BOOST_TEST_MODULE lexer
 #include <boost/test/unit_test.hpp>
 
+using namespace parser;
+
 #define INIT_BOILERPLATE \
     std::istringstream istr(input); \
-    Source src(istr); \
-    Lexer lex(src); \
+    lexer::Source src(istr); \
+    lexer::Lexer lex(src); \
     Parser parser(lex);
 
 // parseTurtleOperationArguments - tested in parseTurtleOperation

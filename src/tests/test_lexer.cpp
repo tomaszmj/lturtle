@@ -6,6 +6,7 @@
 #define BOOST_TEST_MODULE lexer
 #include <boost/test/unit_test.hpp>
 
+using namespace lexer;
 
 BOOST_AUTO_TEST_CASE( get_next_token_random )
 {

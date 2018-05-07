@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-namespace semantics
+namespace semantics_namespace
 {
 
 struct TurtleState

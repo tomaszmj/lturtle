@@ -11,7 +11,7 @@ const char *Exception::what() const noexcept
     return msg.c_str();
 }
 
-LexerException::LexerException(const lexer::Lexer &lex, std::string &&msg)
+LexerException::LexerException(const lexer_namespace::Lexer &lex, std::string &&msg)
     : Exception("Lexer error (" + lex.getSource().getPosition().toString() + ": " + msg)
 {}
 

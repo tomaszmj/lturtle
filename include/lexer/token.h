@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 
-namespace lexer
+namespace lexer_namespace
 {
 
 class Token

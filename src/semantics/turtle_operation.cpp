@@ -3,14 +3,14 @@
 #include "turtle_state.h"
 #include "drawing_context.h"
 
-using namespace semantics;
+using namespace semantics_namespace;
 
-std::unique_ptr<TurtleOperation> TurtleOperation::createOperation(parser::TurtleOperation &operation)
+std::unique_ptr<TurtleOperation> TurtleOperation::createOperation(parser_namespace::TurtleOperation &operation)
 {
 
 }
 
-TurtleOperationForward::TurtleOperationForward(parser::TurtleOperation &operation)
+TurtleOperationForward::TurtleOperationForward(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -25,7 +25,7 @@ void TurtleOperationForward::applyAndDraw(TurtleState &state, DrawingContext &co
 
 }
 
-TurtleOperationRotate::TurtleOperationRotate(parser::TurtleOperation &operation)
+TurtleOperationRotate::TurtleOperationRotate(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -40,7 +40,7 @@ void TurtleOperationRotate::applyAndDraw(TurtleState &state, DrawingContext &con
 
 }
 
-TurtleOperationPenup::TurtleOperationPenup(parser::TurtleOperation &operation)
+TurtleOperationPenup::TurtleOperationPenup(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -55,7 +55,7 @@ void TurtleOperationPenup::applyAndDraw(TurtleState &state, DrawingContext &cont
 
 }
 
-TurtleOperationPendown::TurtleOperationPendown(parser::TurtleOperation &operation)
+TurtleOperationPendown::TurtleOperationPendown(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -70,7 +70,7 @@ void TurtleOperationPendown::applyAndDraw(TurtleState &state, DrawingContext &co
 
 }
 
-TurtleOperationPencolour::TurtleOperationPencolour(parser::TurtleOperation &operation)
+TurtleOperationPencolour::TurtleOperationPencolour(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -85,7 +85,7 @@ void TurtleOperationPencolour::applyAndDraw(TurtleState &state, DrawingContext &
 
 }
 
-TurtleOperationGoto::TurtleOperationGoto(parser::TurtleOperation &operation)
+TurtleOperationGoto::TurtleOperationGoto(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -100,7 +100,7 @@ void TurtleOperationGoto::applyAndDraw(TurtleState &state, DrawingContext &conte
 
 }
 
-TurtleOperationPensize::TurtleOperationPensize(parser::TurtleOperation &operation)
+TurtleOperationPensize::TurtleOperationPensize(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -115,7 +115,7 @@ void TurtleOperationPensize::applyAndDraw(TurtleState &state, DrawingContext &co
 
 }
 
-TurtleOperationScale::TurtleOperationScale(parser::TurtleOperation &operation)
+TurtleOperationScale::TurtleOperationScale(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -130,7 +130,7 @@ void TurtleOperationScale::applyAndDraw(TurtleState &state, DrawingContext &cont
 
 }
 
-TurtleOperationPushstate::TurtleOperationPushstate(parser::TurtleOperation &operation)
+TurtleOperationPushstate::TurtleOperationPushstate(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -145,7 +145,7 @@ void TurtleOperationPushstate::applyAndDraw(TurtleState &state, DrawingContext &
 
 }
 
-TurtleOperationPopstate::TurtleOperationPopstate(parser::TurtleOperation &operation)
+TurtleOperationPopstate::TurtleOperationPopstate(parser_namespace::TurtleOperation &operation)
 {
 
 }

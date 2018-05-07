@@ -4,12 +4,12 @@
 #include <memory>
 #include <initializer_list>
 
-namespace lexer
+namespace lexer_namespace
 {
 class Lexer;
 }
 
-namespace parser
+namespace parser_namespace
 {
 
 class Parser

@@ -2,7 +2,7 @@
 #include "lexer.h"
 #include "exception.h"
 
-using namespace parser;
+using namespace parser_namespace;
 
 Parser::Parser(lexer::Lexer &lex)
     : lexer(lex)
@@ -10,7 +10,7 @@ Parser::Parser(lexer::Lexer &lex)
     nextToken();
 }
 
-const lexer::Lexer &Parser::getLexer()
+const lexer_namespace::Lexer &Parser::getLexer()
 {
     return lexer;
 }
@@ -50,7 +50,7 @@ void Parser::consume(lexer::Token::Symbol token_type)
 }
 
 // accept() is called when there is only one expected token, which WILL be used to construct syntax tree
-std::unique_ptr<lexer::Token> Parser::accept(std::initializer_list<lexer::Token::Symbol> token_types)
+std::unique_ptr<lexer_namespace::Token> Parser::accept(std::initializer_list<lexer::Token::Symbol> token_types)
 {
     bool ok = false;
     for(auto token : token_types)

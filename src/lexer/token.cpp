@@ -3,7 +3,7 @@
 #include <sstream>
 #include <iomanip>
 
-using namespace lexer;
+using namespace lexer_namespace;
 
 Token::Token(const Source::Position &begin)
     : positionBegin(begin), symbol(error)

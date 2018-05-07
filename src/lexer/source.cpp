@@ -1,7 +1,7 @@
 #include "source.h"
 #include "exception.h"
 
-using namespace lexer;
+using namespace lexer_namespace;
 
 Source::Position::Position()
     : line(1), inLine(0), inFile(0)

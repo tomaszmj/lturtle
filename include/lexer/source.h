@@ -1,7 +1,7 @@
 #pragma once
 #include <istream>
 
-namespace lexer
+namespace lexer_namespace
 {
 
 class Source

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace semantics
+namespace semantics_namespace
 {
 
 class DrawingContext

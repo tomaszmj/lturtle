@@ -1,7 +1,7 @@
 #include "syntax_tree.h"
 #include "token.h"
 
-using namespace parser;
+using namespace parser_namespace;
 
 std::string Program::toString() const
 {

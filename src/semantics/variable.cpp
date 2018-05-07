@@ -1,7 +1,7 @@
 #include "variable.h"
 #include "syntax_tree.h"
 
-using namespace semantics;
+using namespace semantics_namespace;
 
 Variable::Variable()
 {
@@ -33,7 +33,7 @@ const std::vector<std::reference_wrapper<Variable>> Variable::getEvaluation() co
 
 }
 
-const std::vector<std::reference_wrapper<TurtleOperation>> Variable::getOperations() const
+const std::vector<TurtleOperation> Variable::getOperations() const
 {
 
 }
@@ -43,12 +43,12 @@ VariableMap::VariableMap()
 
 }
 
-void VariableMap::define(parser::Definition &definition)
+void VariableMap::define(parser_namespace::Definition &definition)
 {
 
 }
 
-const Variable &VariableMap::get(lexer::Token::ValueString &token)
+const Variable &VariableMap::get(lexer_namespace::Token::ValueString &token)
 {
 
 }

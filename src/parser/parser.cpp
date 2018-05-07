@@ -18,9 +18,18 @@ std::unique_ptr<Program> Parser::parseProgram()
     std::unique_ptr<Program> retval(new Program);
     while(currentToken->getSymbol() != Token::end_of_text)
     {
-        retval->statements.push_back(parseStatement());
+        retval->statements.push_back(parseStatementPrivate());
         consume(Token::semicolon_symbol);
     }
+    return std::move(retval);
+}
+
+std::unique_ptr<Statement> Parser::parseStatement()
+{
+    if(currentToken->getSymbol() == Token::end_of_text)
+        return std::unique_ptr<Statement>(nullptr);
+    std::unique_ptr<Statement> retval(parseStatementPrivate());
+    consume(Token::semicolon_symbol);
     return std::move(retval);
 }
 
@@ -69,7 +78,7 @@ void Parser::error(std::string &&msg)
         currentToken->getPositionEnd().toString() + "): " + msg);
 }
 
-std::unique_ptr<Statement> Parser::parseStatement()
+std::unique_ptr<Statement> Parser::parseStatementPrivate()
 {
     switch(currentToken->getSymbol())
     {

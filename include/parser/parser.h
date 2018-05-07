@@ -11,8 +11,14 @@ class Parser
 public:
     Parser(Lexer &lex);
     const Lexer &getLexer();
+
+    // returns the whole 'syntax tree', with root node - Program
+    // returned value is always not null, however Program can contain no statements
     std::unique_ptr<Program> parseProgram();
-    std::unique_ptr<Statement> parseStatement(); // Statements can be parsed individually (instead of parsing the whole Program)
+
+    // parseStatement allows to 'parseProgram' statement by statement, without saving each statement in memory
+    // returned value can be nullptr if end of text was encountered
+    std::unique_ptr<Statement> parseStatement();
 
 private:
     Lexer &lexer;
@@ -24,6 +30,7 @@ private:
     std::unique_ptr<Token> accept(std::initializer_list<Token::Symbol> token_types);
     void error(std::string &&msg);
 
+    std::unique_ptr<Statement> parseStatementPrivate();
     std::unique_ptr<Definition> parseRedefinition();
     std::unique_ptr<Definition> parseDefinition();
     std::unique_ptr<LiteralExecution> parseLiteralExecution();

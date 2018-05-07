@@ -25,15 +25,15 @@ public:
     bool hasProduction() const;
     bool hasEvaluation() const;
     bool hasOperations() const;
-    const std::vector<std::reference_wrapper<Variable>> getProduction() const;
-    const std::vector<std::reference_wrapper<Variable>> getEvaluation() const;
-    const std::vector<TurtleOperation> getOperations() const;
+    const std::vector<std::reference_wrapper<Variable>> &getProduction() const;
+    const std::vector<std::reference_wrapper<Variable>> &getEvaluation() const;
+    const std::vector<std::unique_ptr<TurtleOperation>> &getOperations() const;
 
 private:
     int state;
     std::vector<std::reference_wrapper<Variable>> production;
     std::vector<std::reference_wrapper<Variable>> evaluation;
-    std::vector<TurtleOperation> operations;
+    std::vector<std::unique_ptr<TurtleOperation>> operations;
 
     Variable(); // Variable can be constructed only with VariableMap::define()
 };

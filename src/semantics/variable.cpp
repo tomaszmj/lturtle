@@ -1,5 +1,6 @@
 #include "variable.h"
 #include "syntax_tree.h"
+#include "turtle_operation.h"
 
 using namespace semantics_namespace;
 
@@ -23,17 +24,17 @@ bool Variable::hasOperations() const
 
 }
 
-const std::vector<std::reference_wrapper<Variable>> Variable::getProduction() const
+const std::vector<std::reference_wrapper<Variable>> &Variable::getProduction() const
 {
 
 }
 
-const std::vector<std::reference_wrapper<Variable>> Variable::getEvaluation() const
+const std::vector<std::reference_wrapper<Variable>> &Variable::getEvaluation() const
 {
 
 }
 
-const std::vector<TurtleOperation> Variable::getOperations() const
+const std::vector<std::unique_ptr<TurtleOperation> > &Variable::getOperations() const
 {
 
 }

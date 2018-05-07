@@ -1,16 +1,22 @@
 #include "interpreter.h"
 
-semantics_namespace::Interpreter::Interpreter(std::istream &input, const std::string output_filename)
+using namespace semantics_namespace;
+
+Interpreter::Interpreter(std::istream &input, const std::string output_filename)
 {
 
 }
 
-void semantics_namespace::Interpreter::run()
+void Interpreter::run()
 {
 
 }
 
-void semantics_namespace::Interpreter::interpret(const parser_namespace::Statement &statement)
+CodeAnalyzer::CodeAnalyzer(std::istream &input)
+    : source(input), lexer(source), parser(lexer)
+{}
+
+std::vector<std::unique_ptr<TurtleOperation>> &&CodeAnalyzer::interpret(UtmostTurtleCoordinates &coords)
 {
 
 }

@@ -4,6 +4,8 @@
 namespace semantics_namespace
 {
 
+struct UtmostTurtleCoordinates;
+
 struct TurtleState
 {
     uint8_t pencolour[3];
@@ -14,6 +16,7 @@ struct TurtleState
     float scale;
 
     TurtleState();
+    void setPositionInTheMiddle(UtmostTurtleCoordinates &sd);
 };
 
 }

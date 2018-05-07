@@ -17,6 +17,7 @@ class TurtleOperation
 {
 public:
     static std::unique_ptr<TurtleOperation> createOperation(parser_namespace::TurtleOperation &operation);
+    static void resetStateStack();
     virtual ~TurtleOperation() {}
     virtual void apply(TurtleState &state) = 0;
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context) = 0;

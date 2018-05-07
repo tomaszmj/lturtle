@@ -10,6 +10,11 @@ std::unique_ptr<TurtleOperation> TurtleOperation::createOperation(parser_namespa
 
 }
 
+void TurtleOperation::resetStateStack()
+{
+
+}
+
 TurtleOperationForward::TurtleOperationForward(parser_namespace::TurtleOperation &operation)
 {
 

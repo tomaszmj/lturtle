@@ -1,6 +1,9 @@
 #pragma once
 #include <istream>
 
+namespace lexer
+{
+
 class Source
 {
 public:
@@ -25,3 +28,5 @@ private:
     Position position;
     char currentChar;
 };
+
+}

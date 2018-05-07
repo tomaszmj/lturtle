@@ -2,8 +2,10 @@
 #include <exception>
 #include <string>
 
+namespace lexer
+{
 class Lexer;
-class Parser;
+}
 
 class Exception : public std::exception
 {
@@ -17,7 +19,7 @@ protected:
 class LexerException : public Exception
 {
 public:
-    LexerException(const Lexer &lex, std::string &&message);
+    LexerException(const lexer::Lexer &lex, std::string &&message);
 };
 
 class ParserException : public Exception

@@ -3,6 +3,9 @@
 #include <string>
 #include <memory>
 
+namespace lexer
+{
+
 class Token
 {
     friend class Lexer;
@@ -64,3 +67,5 @@ private:
     Symbol symbol;
     std::unique_ptr<Value> value;
 };
+
+}

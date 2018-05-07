@@ -6,6 +6,8 @@
 #include <limits>
 #include <cmath>
 
+using namespace lexer;
+
 // Hashing system has been generated in auxiliary subproject - hashtest
 const Lexer::Keyword Lexer::keywordHashTable[Lexer::NUMBER_OF_KEYWORDS]  =
 {

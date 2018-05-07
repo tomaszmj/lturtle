@@ -1,6 +1,8 @@
 #include "syntax_tree.h"
 #include "token.h"
 
+using namespace parser;
+
 std::string Program::toString() const
 {
     std::string retval;

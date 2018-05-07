@@ -4,13 +4,19 @@
 #include <memory>
 #include <initializer_list>
 
+namespace lexer
+{
 class Lexer;
+}
+
+namespace parser
+{
 
 class Parser
 {
 public:
-    Parser(Lexer &lex);
-    const Lexer &getLexer();
+    Parser(lexer::Lexer &lex);
+    const lexer::Lexer &getLexer();
 
     // returns the whole 'syntax tree', with root node - Program
     // returned value is always not null, however Program can contain no statements
@@ -21,13 +27,13 @@ public:
     std::unique_ptr<Statement> parseStatement();
 
 private:
-    Lexer &lexer;
-    std::unique_ptr<Token> currentToken;
+    lexer::Lexer &lexer;
+    std::unique_ptr<lexer::Token> currentToken;
 
     void nextToken();
-    void consume(Token::Symbol token_type);
+    void consume(lexer::Token::Symbol token_type);
 
-    std::unique_ptr<Token> accept(std::initializer_list<Token::Symbol> token_types);
+    std::unique_ptr<lexer::Token> accept(std::initializer_list<lexer::Token::Symbol> token_types);
     void error(std::string &&msg);
 
     std::unique_ptr<Statement> parseStatementPrivate();
@@ -43,3 +49,5 @@ private:
     std::unique_ptr<TurtleOperation> parseTurtleOperation();
     std::unique_ptr<TurtleOperationArguments> parseTurtleOperationArguments();
 };
+
+}

@@ -2,7 +2,14 @@
 #include <memory>
 #include <vector>
 
+namespace lexer
+{
 class Token;
+}
+
+namespace parser
+{
+
 struct Statement;
 struct LiteralString;
 struct TurtleOperation;
@@ -30,7 +37,7 @@ struct Statement
 struct Definition : public Statement
 {
     bool canRedefine;
-    std::unique_ptr<Token> literal;
+    std::unique_ptr<lexer::Token> literal;
 
     virtual std::string toString() const;
 };
@@ -53,7 +60,7 @@ struct Production : public Definition
 
 struct Evaluation: public Definition
 {
-    std::unique_ptr<Token> intNumber;
+    std::unique_ptr<lexer::Token> intNumber;
     std::unique_ptr<LiteralString> literals;
 
     virtual Type getType() const { return evaluation; }
@@ -78,7 +85,7 @@ struct TurtleOperationExecution : public Statement
 
 struct LiteralString
 {
-    std::vector<std::unique_ptr<Token>> literals;
+    std::vector<std::unique_ptr<lexer::Token>> literals;
 
     std::string toString() const;
 };
@@ -98,7 +105,9 @@ struct TurtleOperation
 
 struct TurtleOperationArguments
 {
-    std::vector<std::unique_ptr<Token>> numbers;
+    std::vector<std::unique_ptr<lexer::Token>> numbers;
 
     std::string toString() const;
 };
+
+}

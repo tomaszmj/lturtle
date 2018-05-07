@@ -4,6 +4,9 @@
 #include <string>
 #include <memory>
 
+namespace lexer
+{
+
 class Lexer
 {
 public:
@@ -43,3 +46,5 @@ private:
     TokenPtr readFloat(long long unsigned integer_part, bool isnegative);
     TokenPtr readWord();
 };
+
+}

@@ -15,8 +15,8 @@ namespace parser_namespace
 class Parser
 {
 public:
-    Parser(lexer::Lexer &lex);
-    const lexer::Lexer &getLexer();
+    Parser(lexer_namespace::Lexer &lex);
+    const lexer_namespace::Lexer &getLexer();
 
     // returns the whole 'syntax tree', with root node - Program
     // returned value is always not null, however Program can contain no statements
@@ -27,13 +27,13 @@ public:
     std::unique_ptr<Statement> parseStatement();
 
 private:
-    lexer::Lexer &lexer;
-    std::unique_ptr<lexer::Token> currentToken;
+    lexer_namespace::Lexer &lexer;
+    std::unique_ptr<lexer_namespace::Token> currentToken;
 
     void nextToken();
-    void consume(lexer::Token::Symbol token_type);
+    void consume(lexer_namespace::Token::Symbol token_type);
 
-    std::unique_ptr<lexer::Token> accept(std::initializer_list<lexer::Token::Symbol> token_types);
+    std::unique_ptr<lexer_namespace::Token> accept(std::initializer_list<lexer_namespace::Token::Symbol> token_types);
     void error(std::string &&msg);
 
     std::unique_ptr<Statement> parseStatementPrivate();

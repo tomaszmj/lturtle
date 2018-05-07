@@ -86,7 +86,7 @@ void run_parser_test()
 {
     lexer_namespace::Source src(std::cin);
     lexer_namespace::Lexer lex(src);
-    parser::Parser parser(lex);
+    parser_namespace::Parser parser(lex);
     auto program = parser.parseProgram();
     std::cout << program->toString();
 }

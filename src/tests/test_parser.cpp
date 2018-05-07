@@ -11,8 +11,8 @@ using namespace parser_namespace;
 
 #define INIT_BOILERPLATE \
     std::istringstream istr(input); \
-    lexer::Source src(istr); \
-    lexer::Lexer lex(src); \
+    lexer_namespace::Source src(istr); \
+    lexer_namespace::Lexer lex(src); \
     Parser parser(lex);
 
 // parseTurtleOperationArguments - tested in parseTurtleOperation
@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(parseTurtleOperation)
     popstate();
     )";
     INIT_BOILERPLATE
-    auto program = parser_namespace.parseProgram();
+    auto program = parser.parseProgram();
     std::string str = program->toString();
     BOOST_REQUIRE(program->toString() == R"(forward(1.0000);
 forward(1);
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(parseEvaluation)
     x = evaluate(4, a+bc +   d);
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "x = evaluate(4, a + bc + d)");
 }
 
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE(parseEvaluation_redefine)
     redefine     x = evaluate(4, a+bc +   d);
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "redefine x = evaluate(4, a + bc + d)");
 }
 
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(parseOperation_empty)
     xxx = {};
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "xxx = { }");
 }
 
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(parseOperation_empty_redefine)
     redefine     xxx={};
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "redefine xxx = { }");
 }
 
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE(parseOperation_nonempty)
     pendown(); };
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "xxx = { pushstate(); pendown(); }");
 }
 
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE(parseOperation_nonempty_redefine)
     pendown(); };
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "redefine xxx = { pushstate(); pendown(); }");
 }
 
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(parseProduction)
 aaa -> x   + y + z ;
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "aaa -> x + y + z");
 }
 
@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(parseProduction_redefine)
 aaa -> x   + y + z ;
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "redefine aaa -> x + y + z");
 }
 
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(parseLiteralExecution)
     execute(x+aa);
     )";
     INIT_BOILERPLATE
-    auto st = parser_namespace.parseStatement();
+    auto st = parser.parseStatement();
     BOOST_REQUIRE(st->toString() == "execute(x + aa)");
 }
 
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE(parseProgram_example)
     execute(tree3);
     )";
     INIT_BOILERPLATE
-    auto program = parser_namespace.parseProgram();
+    auto program = parser.parseProgram();
     std::string str = program->toString();
     BOOST_REQUIRE(program->toString() ==
 R"(s0 = { forward(1.0000); };
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE(error_consume)
     const std::string input = "execute(x+aa)+;";
     INIT_BOILERPLATE
     auto predicate = [](const ParserException &e) { return std::string(e.what()).find("at token '+'") != std::string::npos; };
-    BOOST_CHECK_EXCEPTION(parser_namespace.parseStatement(), ParserException, predicate);
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
 }
 
 BOOST_AUTO_TEST_CASE(error_accept)
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(error_accept)
     const std::string input = "x = evaluate(3, a+b+22";
     INIT_BOILERPLATE
     auto predicate = [](const ParserException &e) { return std::string(e.what()).find("expected token types: literal") != std::string::npos; };
-    BOOST_CHECK_EXCEPTION(parser_namespace.parseStatement(), ParserException, predicate);
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
 }
 
 BOOST_AUTO_TEST_CASE(error_parseDefinition)
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE(error_parseDefinition)
     const std::string input = "x () ;";
     INIT_BOILERPLATE
     auto predicate = [](const ParserException &e) { return std::string(e.what()).find("expected '=' or '->'") != std::string::npos; };
-    BOOST_CHECK_EXCEPTION(parser_namespace.parseStatement(), ParserException, predicate);
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
 }
 
 BOOST_AUTO_TEST_CASE(error_parseOperationOrEvaluation)
@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE(error_parseOperationOrEvaluation)
     INIT_BOILERPLATE
     auto predicate = [](const ParserException &e) {
         return std::string(e.what()).find("expected '{' and turtle operations or 'evaluate' and evaluation arguments") != std::string::npos; };
-    BOOST_CHECK_EXCEPTION(parser_namespace.parseStatement(), ParserException, predicate);
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
 }
 
 BOOST_AUTO_TEST_CASE(error_parseTurtleOperation)
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(error_parseTurtleOperation)
     INIT_BOILERPLATE
     auto predicate = [](const ParserException &e) {
         return std::string(e.what()).find("expected one of turtle operation keywords") != std::string::npos; };
-    BOOST_CHECK_EXCEPTION(parser_namespace.parseStatement(), ParserException, predicate);
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
 }
 
 #undef INIT_BOILERPLATE

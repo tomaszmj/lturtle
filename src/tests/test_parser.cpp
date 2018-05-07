@@ -179,4 +179,46 @@ execute(tree3);
 )");
 }
 
+BOOST_AUTO_TEST_CASE(error_consume)
+{
+    const std::string input = "execute(x+aa)+;";
+    INIT_BOILERPLATE
+    auto predicate = [](const ParserException &e) { return std::string(e.what()).find("at token '+'") != std::string::npos; };
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
+}
+
+BOOST_AUTO_TEST_CASE(error_accept)
+{
+    const std::string input = "x = evaluate(3, a+b+22";
+    INIT_BOILERPLATE
+    auto predicate = [](const ParserException &e) { return std::string(e.what()).find("expected token types: literal") != std::string::npos; };
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
+}
+
+BOOST_AUTO_TEST_CASE(error_parseDefinition)
+{
+    const std::string input = "x () ;";
+    INIT_BOILERPLATE
+    auto predicate = [](const ParserException &e) { return std::string(e.what()).find("expected '=' or '->'") != std::string::npos; };
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
+}
+
+BOOST_AUTO_TEST_CASE(error_parseOperationOrEvaluation)
+{
+    const std::string input = "x = a;";
+    INIT_BOILERPLATE
+    auto predicate = [](const ParserException &e) {
+        return std::string(e.what()).find("expected '{' and turtle operations or 'evaluate' and evaluation arguments") != std::string::npos; };
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
+}
+
+BOOST_AUTO_TEST_CASE(error_parseTurtleOperation)
+{
+    const std::string input = "x = { forward(1.0); aaaaa(); };";
+    INIT_BOILERPLATE
+    auto predicate = [](const ParserException &e) {
+        return std::string(e.what()).find("expected one of turtle operation keywords") != std::string::npos; };
+    BOOST_CHECK_EXCEPTION(parser.parseStatement(), ParserException, predicate);
+}
+
 #undef INIT_BOILERPLATE

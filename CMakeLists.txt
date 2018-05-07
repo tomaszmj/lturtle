@@ -4,9 +4,9 @@ project(lturtle)
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 enable_testing()
 
-FILE(GLOB_RECURSE SOURCES "src/exception/*" "src/lexer/*" "src/parser/*")
+FILE(GLOB_RECURSE SOURCES "src/exception/*" "src/lexer/*" "src/parser/*" "src/semantics/*")
 FILE(GLOB_RECURSE HEADERS "include/*")
-include_directories("include/exception" "include/lexer" "include/parser")
+include_directories("include/exception" "include/lexer" "include/parser" "include/semantics")
 
 set(DEFAULT_FLAGS "-Wall -pedantic -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${DEFAULT_FLAGS} -O0 -g -DDEBUG")

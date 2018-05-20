@@ -16,9 +16,10 @@ class DrawingContext;
 class TurtleOperation
 {
 public:
-    static std::unique_ptr<TurtleOperation> createOperation(parser_namespace::TurtleOperation &operation);
+    static std::unique_ptr<TurtleOperation> create(parser_namespace::TurtleOperation &operation);
     static void resetStateStack();
     virtual ~TurtleOperation() {}
+    virtual std::unique_ptr<TurtleOperation> clone() const = 0;
     virtual void apply(TurtleState &state) = 0;
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context) = 0;
 
@@ -30,6 +31,8 @@ class TurtleOperationForward : public TurtleOperation
 {
 public:
     TurtleOperationForward(parser_namespace::TurtleOperation &operation);
+    TurtleOperationForward(const TurtleOperationForward &other);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -41,6 +44,8 @@ class TurtleOperationRotate : public TurtleOperation
 {
 public:
     TurtleOperationRotate(parser_namespace::TurtleOperation &operation);
+    TurtleOperationRotate(const TurtleOperationRotate &other);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -51,7 +56,7 @@ private:
 class TurtleOperationPenup : public TurtleOperation
 {
 public:
-    TurtleOperationPenup(parser_namespace::TurtleOperation &operation);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -61,7 +66,7 @@ private:
 class TurtleOperationPendown : public TurtleOperation
 {
 public:
-    TurtleOperationPendown(parser_namespace::TurtleOperation &operation);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -72,6 +77,8 @@ class TurtleOperationPencolour : public TurtleOperation
 {
 public:
     TurtleOperationPencolour(parser_namespace::TurtleOperation &operation);
+    TurtleOperationPencolour(const TurtleOperationPencolour &other);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -83,6 +90,8 @@ class TurtleOperationGoto : public TurtleOperation
 {
 public:
     TurtleOperationGoto(parser_namespace::TurtleOperation &operation);
+    TurtleOperationGoto(const TurtleOperationGoto &other);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -94,6 +103,8 @@ class TurtleOperationPensize : public TurtleOperation
 {
 public:
     TurtleOperationPensize(parser_namespace::TurtleOperation &operation);
+    TurtleOperationPensize(const TurtleOperationPensize &other);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -105,6 +116,8 @@ class TurtleOperationScale : public TurtleOperation
 {
 public:
     TurtleOperationScale(parser_namespace::TurtleOperation &operation);
+    TurtleOperationScale(const TurtleOperationScale &other);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -115,7 +128,7 @@ private:
 class TurtleOperationPushstate : public TurtleOperation
 {
 public:
-    TurtleOperationPushstate(parser_namespace::TurtleOperation &operation);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
@@ -125,7 +138,7 @@ private:
 class TurtleOperationPopstate : public TurtleOperation
 {
 public:
-    TurtleOperationPopstate(parser_namespace::TurtleOperation &operation);
+    virtual std::unique_ptr<TurtleOperation> clone() const;
     virtual void apply(TurtleState &state);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 

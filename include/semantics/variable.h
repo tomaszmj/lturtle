@@ -30,7 +30,9 @@ public:
     const std::vector<std::unique_ptr<TurtleOperation>> &getOperations() const;
 
 private:
-    int state;
+    bool hasProductionFlag;
+    bool hasEvaluationFlag;
+    // there is no hasOperationFlag, because Variable either has operations or evaluation
     std::vector<std::reference_wrapper<Variable>> production;
     std::vector<std::reference_wrapper<Variable>> evaluation;
     std::vector<std::unique_ptr<TurtleOperation>> operations;
@@ -43,7 +45,7 @@ class VariableMap
 public:
     VariableMap();
     void define(parser_namespace::Definition &definition);
-    const Variable& get(lexer_namespace::Token::ValueString &token);
+    const Variable &get(const std::string &variable_name);
 
 private:
     std::unordered_map<std::string, Variable> map;

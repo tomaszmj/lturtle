@@ -5,7 +5,7 @@
 
 using namespace semantics_namespace;
 
-std::unique_ptr<TurtleOperation> TurtleOperation::createOperation(parser_namespace::TurtleOperation &operation)
+std::unique_ptr<TurtleOperation> TurtleOperation::create(parser_namespace::TurtleOperation &operation)
 {
 
 }
@@ -18,6 +18,15 @@ void TurtleOperation::resetStateStack()
 TurtleOperationForward::TurtleOperationForward(parser_namespace::TurtleOperation &operation)
 {
 
+}
+
+TurtleOperationForward::TurtleOperationForward(const TurtleOperationForward &other)
+    : arg(other.arg)
+{}
+
+std::unique_ptr<TurtleOperation> TurtleOperationForward::clone() const
+{
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationForward(*this));
 }
 
 void TurtleOperationForward::apply(TurtleState &state)
@@ -35,6 +44,15 @@ TurtleOperationRotate::TurtleOperationRotate(parser_namespace::TurtleOperation &
 
 }
 
+TurtleOperationRotate::TurtleOperationRotate(const TurtleOperationRotate &other)
+    : arg(other.arg)
+{}
+
+std::unique_ptr<TurtleOperation> TurtleOperationRotate::clone() const
+{
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationRotate(*this));
+}
+
 void TurtleOperationRotate::apply(TurtleState &state)
 {
 
@@ -45,9 +63,9 @@ void TurtleOperationRotate::applyAndDraw(TurtleState &state, DrawingContext &con
 
 }
 
-TurtleOperationPenup::TurtleOperationPenup(parser_namespace::TurtleOperation &operation)
+std::unique_ptr<TurtleOperation> TurtleOperationPenup::clone() const
 {
-
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationPenup(*this));
 }
 
 void TurtleOperationPenup::apply(TurtleState &state)
@@ -60,9 +78,9 @@ void TurtleOperationPenup::applyAndDraw(TurtleState &state, DrawingContext &cont
 
 }
 
-TurtleOperationPendown::TurtleOperationPendown(parser_namespace::TurtleOperation &operation)
+std::unique_ptr<TurtleOperation> TurtleOperationPendown::clone() const
 {
-
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationPendown);
 }
 
 void TurtleOperationPendown::apply(TurtleState &state)
@@ -80,6 +98,15 @@ TurtleOperationPencolour::TurtleOperationPencolour(parser_namespace::TurtleOpera
 
 }
 
+TurtleOperationPencolour::TurtleOperationPencolour(const TurtleOperationPencolour &other)
+    : r(other.r), g(other.g), b(other.b)
+{}
+
+std::unique_ptr<TurtleOperation> TurtleOperationPencolour::clone() const
+{
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationPencolour(*this));
+}
+
 void TurtleOperationPencolour::apply(TurtleState &state)
 {
 
@@ -93,6 +120,15 @@ void TurtleOperationPencolour::applyAndDraw(TurtleState &state, DrawingContext &
 TurtleOperationGoto::TurtleOperationGoto(parser_namespace::TurtleOperation &operation)
 {
 
+}
+
+TurtleOperationGoto::TurtleOperationGoto(const TurtleOperationGoto &other)
+    : x(other.x), y(other.y)
+{}
+
+std::unique_ptr<TurtleOperation> TurtleOperationGoto::clone() const
+{
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationGoto(*this));
 }
 
 void TurtleOperationGoto::apply(TurtleState &state)
@@ -110,6 +146,15 @@ TurtleOperationPensize::TurtleOperationPensize(parser_namespace::TurtleOperation
 
 }
 
+TurtleOperationPensize::TurtleOperationPensize(const TurtleOperationPensize &other)
+    : arg(other.arg)
+{}
+
+std::unique_ptr<TurtleOperation> TurtleOperationPensize::clone() const
+{
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationPensize(*this));
+}
+
 void TurtleOperationPensize::apply(TurtleState &state)
 {
 
@@ -125,6 +170,15 @@ TurtleOperationScale::TurtleOperationScale(parser_namespace::TurtleOperation &op
 
 }
 
+TurtleOperationScale::TurtleOperationScale(const TurtleOperationScale &other)
+    : arg(other.arg)
+{}
+
+std::unique_ptr<TurtleOperation> TurtleOperationScale::clone() const
+{
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationScale(*this));
+}
+
 void TurtleOperationScale::apply(TurtleState &state)
 {
 
@@ -135,9 +189,9 @@ void TurtleOperationScale::applyAndDraw(TurtleState &state, DrawingContext &cont
 
 }
 
-TurtleOperationPushstate::TurtleOperationPushstate(parser_namespace::TurtleOperation &operation)
+std::unique_ptr<TurtleOperation> TurtleOperationPushstate::clone() const
 {
-
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationPushstate);
 }
 
 void TurtleOperationPushstate::apply(TurtleState &state)
@@ -150,9 +204,9 @@ void TurtleOperationPushstate::applyAndDraw(TurtleState &state, DrawingContext &
 
 }
 
-TurtleOperationPopstate::TurtleOperationPopstate(parser_namespace::TurtleOperation &operation)
+std::unique_ptr<TurtleOperation> TurtleOperationPopstate::clone() const
 {
-
+    return std::unique_ptr<TurtleOperation>(new TurtleOperationPopstate);
 }
 
 void TurtleOperationPopstate::apply(TurtleState &state)

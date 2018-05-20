@@ -34,7 +34,7 @@ const std::vector<std::reference_wrapper<Variable>> &Variable::getEvaluation() c
 
 }
 
-const std::vector<std::unique_ptr<TurtleOperation> > &Variable::getOperations() const
+const std::vector<std::unique_ptr<TurtleOperation>> &Variable::getOperations() const
 {
 
 }
@@ -49,7 +49,7 @@ void VariableMap::define(parser_namespace::Definition &definition)
 
 }
 
-const Variable &VariableMap::get(lexer_namespace::Token::ValueString &token)
+const Variable &VariableMap::get(const std::string &variable_name)
 {
 
 }

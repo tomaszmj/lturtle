@@ -28,15 +28,21 @@ public:
     CodeAnalyzer(std::istream &input);
 
     // returns vector of raw turtle operations (after evaluating all variables etc.) and fills in StartingData
-    std::vector<std::unique_ptr<TurtleOperation>> &&interpret(UtmostTurtleCoordinates &coords);
+    std::vector<std::unique_ptr<TurtleOperation>> &&interpret();
+    UtmostTurtleCoordinates &getUtmostCoordinates();
 
 private:
     lexer_namespace::Source source;
     lexer_namespace::Lexer lexer;
     parser_namespace::Parser parser;
     TurtleState turtleState;
+    UtmostTurtleCoordinates coords;
     VariableMap variableMap;
     std::vector<std::unique_ptr<TurtleOperation>> turtleOperationsToReturn;
+
+    void interpretLiteralExecution(const parser_namespace::LiteralExecution *statement);
+    void interpretVariableExecution(const Variable &variable);
+    void interpretTurtleOperationExecution(const parser_namespace::TurtleOperationExecution *statement);
 };
 
 }

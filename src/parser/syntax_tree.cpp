@@ -50,9 +50,9 @@ std::string TurtleOperationExecution::toString() const
 
 std::string LiteralString::toString() const
 {
-    std::string retval = literals[0]->toString();
-    for(size_t i = 1; i < literals.size(); ++i)
-        retval += " + " + literals[i]->toString();
+    std::string retval = literalsVector[0]->toString();
+    for(size_t i = 1; i < literalsVector.size(); ++i)
+        retval += " + " + literalsVector[i]->toString();
     return retval;
 }
 

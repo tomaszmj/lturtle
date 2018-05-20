@@ -85,7 +85,7 @@ struct TurtleOperationExecution : public Statement
 
 struct LiteralString
 {
-    std::vector<std::unique_ptr<lexer_namespace::Token>> literals;
+    std::vector<std::unique_ptr<lexer_namespace::Token>> literalsVector;
 
     std::string toString() const;
 };

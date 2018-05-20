@@ -191,11 +191,11 @@ std::unique_ptr<Evaluation> Parser::parseEvaluation()
 std::unique_ptr<LiteralString> Parser::parseLiteralString()
 {
     std::unique_ptr<LiteralString> retval(new LiteralString);
-    retval->literals.push_back(accept({lexer_namespace::Token::literal})); // LiteralString cannot be empty
+    retval->literalsVector.push_back(accept({lexer_namespace::Token::literal})); // LiteralString cannot be empty
     while(currentToken->getSymbol() == lexer_namespace::Token::plus_symbol)
     {
         nextToken();
-        retval->literals.push_back(accept({lexer_namespace::Token::literal}));
+        retval->literalsVector.push_back(accept({lexer_namespace::Token::literal}));
     }
     return std::move(retval);
 }

@@ -1,4 +1,5 @@
 #include "interpreter.h"
+#include "exception.h"
 
 using namespace semantics_namespace;
 
@@ -24,9 +25,13 @@ std::vector<std::unique_ptr<TurtleOperation>> &&CodeAnalyzer::interpret()
         switch(statement->getType())
         {
             case parser_namespace::Statement::operation:
+                variableMap.defineOperation(*dynamic_cast<parser_namespace::Operation*>(statement.get()));
+                break;
             case parser_namespace::Statement::production:
+                variableMap.defineProduction(*dynamic_cast<parser_namespace::Production*>(statement.get()));
+                break;
             case parser_namespace::Statement::evaluation:
-                variableMap.define(*dynamic_cast<parser_namespace::Definition*>(statement.get()));
+                variableMap.defineEvaluation(*dynamic_cast<parser_namespace::Evaluation*>(statement.get()));
                 break;
             case parser_namespace::Statement::literal_execution:
                 interpretLiteralExecution(dynamic_cast<parser_namespace::LiteralExecution*>(statement.get()));
@@ -46,10 +51,13 @@ UtmostTurtleCoordinates &CodeAnalyzer::getUtmostCoordinates()
 
 void CodeAnalyzer::interpretLiteralExecution(const parser_namespace::LiteralExecution *statement)
 {
-    for(const std::unique_ptr<lexer_namespace::Token> &literal_token : statement->literals->literalsVector)
+    for(const std::unique_ptr<lexer_namespace::Token> &literal : statement->literals->literalsVector)
     {
-        const Variable &variable = variableMap.get(literal_token->getLiteral());
-        interpretVariableExecution(variable);
+        const Variable *variable = variableMap.find(literal->getLiteral());
+        if(variable == nullptr)
+            throw SemanticsException("access to undefined variable " + literal->getLiteral() +
+                "\n(from " + literal->getPositionBegin().toString() + " to " + literal->getPositionEnd().toString() + ")");
+        interpretVariableExecution(*variable);
     }
 }
 
@@ -67,7 +75,7 @@ void CodeAnalyzer::interpretVariableExecution(const Variable &variable)
     {
         for(const auto &var : variable.getEvaluation())
             interpretVariableExecution(var);
-        //TODO - detect endless recursion (varable evaluated to the same variable)
+        //TODO - detect endless recursion (variable evaluated to the same variable)
     }
 }
 

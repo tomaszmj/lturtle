@@ -7,12 +7,35 @@ using namespace semantics_namespace;
 
 std::unique_ptr<TurtleOperation> TurtleOperation::create(parser_namespace::TurtleOperation &operation)
 {
-
+    switch(operation.type)
+    {
+        case parser_namespace::TurtleOperation::forward_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationForward(operation));
+        case parser_namespace::TurtleOperation::rotate_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationRotate(operation));
+        case parser_namespace::TurtleOperation::penup_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationPenup);
+        case parser_namespace::TurtleOperation::pendown_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationPendown);
+        case parser_namespace::TurtleOperation::pencolour_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationPencolour(operation));
+        case parser_namespace::TurtleOperation::goto_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationGoto(operation));
+        case parser_namespace::TurtleOperation::pensize_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationPensize(operation));
+        case parser_namespace::TurtleOperation::scale_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationScale(operation));
+        case parser_namespace::TurtleOperation::pushstate_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationPushstate);
+        case parser_namespace::TurtleOperation::popstate_operation:
+            return std::unique_ptr<TurtleOperation>(new TurtleOperationPopstate);
+    }
+    return std::unique_ptr<TurtleOperation>(nullptr); // suppress compiler warning (impossible - all swich cases exhausted)
 }
 
 void TurtleOperation::resetStateStack()
 {
-
+    stateStack.clear();
 }
 
 TurtleOperationForward::TurtleOperationForward(parser_namespace::TurtleOperation &operation)

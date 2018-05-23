@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include <stack>
+#include <vector>
 
 namespace parser_namespace
 {
@@ -24,7 +24,7 @@ public:
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context) = 0;
 
 protected:
-    static std::stack<TurtleState> stateStack;
+    static std::vector<TurtleState> stateStack;
 };
 
 class TurtleOperationForward : public TurtleOperation

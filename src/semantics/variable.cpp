@@ -53,7 +53,8 @@ void VariableMap::defineOperation(parser_namespace::Operation &definition)
 
 void VariableMap::defineProduction(parser_namespace::Production &definition)
 {
-    Variable &var = findOrThrow(definition.literal);
+    const auto &literal = definition.literal;
+    Variable &var = findOrThrow(literal);
     if(var.hasProduction() && !definition.canRedefine)
         throw SemanticsException("attempt to redefine production of variable " + literal->getLiteral() + + " without 'redefine'"
             "\n(from " + literal->getPositionBegin().toString() + " to " + literal->getPositionEnd().toString() + ")");

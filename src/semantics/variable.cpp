@@ -53,7 +53,10 @@ void VariableMap::defineOperation(parser_namespace::Operation &definition)
 
 void VariableMap::defineProduction(parser_namespace::Production &definition)
 {
-    Variable &var = findOrThrow(definition);
+    Variable &var = findOrThrow(definition.literal);
+    if(var.hasProduction() && !definition.canRedefine)
+        throw SemanticsException("attempt to redefine production of variable " + literal->getLiteral() + + " without 'redefine'"
+            "\n(from " + literal->getPositionBegin().toString() + " to " + literal->getPositionEnd().toString() + ")");
     var.hasProductionFlag = true;
     var.production.reserve(definition.literals->literalsVector.size());
     var.production.clear();
@@ -63,12 +66,13 @@ void VariableMap::defineProduction(parser_namespace::Production &definition)
 
 void VariableMap::defineEvaluation(parser_namespace::Evaluation &definition)
 {
-    Variable &var = findOrInsert(definition);
-    var.hasEvaluationFlag = true;
-    var.evaluation.reserve(definition.literals->literalsVector.size());
-    var.evaluation.clear();
-    for(const std::unique_ptr<lexer_namespace::Token> &literal : definition.literals->literalsVector)
-        var.evaluation.emplace_back(findOrThrow(literal));
+//TODO
+//    Variable &var = findOrInsert(definition);
+//    var.hasEvaluationFlag = true;
+//    var.evaluation.reserve(definition.literals->literalsVector.size());
+//    var.evaluation.clear();
+//    for(const std::unique_ptr<lexer_namespace::Token> &literal : definition.literals->literalsVector)
+//        var.evaluation.emplace_back(findOrThrow(literal));
 }
 
 const Variable *VariableMap::find(const std::string &variable_name)

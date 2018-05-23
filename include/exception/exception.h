@@ -27,3 +27,9 @@ class ParserException : public Exception
 public:
     ParserException(std::string &&message);
 };
+
+class SemanticsException : public Exception
+{
+public:
+    SemanticsException(std::string &&message);
+};

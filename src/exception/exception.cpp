@@ -18,3 +18,7 @@ LexerException::LexerException(const lexer_namespace::Lexer &lex, std::string &&
 ParserException::ParserException(std::string &&message)
     : Exception("Parser error: " + message)
 {}
+
+SemanticsException::SemanticsException(std::string &&message)
+    : Exception("Semantic error: " + message)
+{}

@@ -1,5 +1,6 @@
 #include "exception.h"
 #include "lexer.h"
+#include "token.h"
 #include "source.h"
 
 Exception::Exception(std::string &&message)
@@ -21,4 +22,9 @@ ParserException::ParserException(std::string &&message)
 
 SemanticsException::SemanticsException(std::string &&message)
     : Exception("Semantic error: " + message)
+{}
+
+SemanticsException::SemanticsException(std::string &&message, const lexer_namespace::Token &literal)
+    : Exception("Semantic error: " + message +
+                "\n(from " + literal.getPositionBegin().toString() + " to " + literal.getPositionEnd().toString() + ")")
 {}

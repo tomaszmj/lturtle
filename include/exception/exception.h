@@ -5,6 +5,7 @@
 namespace lexer_namespace
 {
 class Lexer;
+class Token;
 }
 
 class Exception : public std::exception
@@ -32,4 +33,5 @@ class SemanticsException : public Exception
 {
 public:
     SemanticsException(std::string &&message);
+    SemanticsException(std::string &&message, const lexer_namespace::Token &literal);
 };

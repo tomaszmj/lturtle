@@ -46,15 +46,17 @@ class VariableMap
 {
 public:
     VariableMap();
-    void defineOperation(parser_namespace::Operation &definition);
-    void defineProduction(parser_namespace::Production &definition);
-    void defineEvaluation(parser_namespace::Evaluation &definition);
-    const Variable *find(const std::string &variable_name); // returns nullptr if not found
+    void defineOperation(const parser_namespace::Operation &definition);
+    void defineProduction(const parser_namespace::Production &definition);
+    void defineEvaluation(const parser_namespace::Evaluation &definition);
+    const Variable *find(const std::string &variable_name) const; // returns nullptr if not found
+    static void evaluationIteration(const std::vector<std::reference_wrapper<Variable>> &from,
+                                    std::vector<std::reference_wrapper<Variable>> &to);
 
 private:
     Variable *findNonconst(const std::string &variable_name); // returns nullptr if not found
-    Variable &findOrThrow(const std::unique_ptr<lexer_namespace::Token> &literal); // throws if not found
-    Variable &findOrInsert(parser_namespace::Definition &definition); // inserts if not found
+    Variable &findOrThrow(const lexer_namespace::Token &literal); // throws if not found
+    Variable &insertOrFindAndRedefine(const parser_namespace::Definition &definition); // inserts if not found
     std::unordered_map<std::string, Variable> map;
 };
 

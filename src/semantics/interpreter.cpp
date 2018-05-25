@@ -15,9 +15,6 @@ void Interpreter::run()
 
 CodeAnalyzer::CodeAnalyzer(std::istream &input)
     : source(input), lexer(source), parser(lexer)
-{}
-
-std::vector<std::unique_ptr<TurtleOperation>> &&CodeAnalyzer::interpret()
 {
     std::unique_ptr<parser_namespace::Statement> statement;
     while((statement = parser.parseStatement()) != nullptr)
@@ -41,12 +38,16 @@ std::vector<std::unique_ptr<TurtleOperation>> &&CodeAnalyzer::interpret()
                 break;
         }
     }
-    return std::move(turtleOperationsToReturn);
 }
 
-UtmostTurtleCoordinates &CodeAnalyzer::getUtmostCoordinates()
+std::vector<std::unique_ptr<TurtleOperation> > &&CodeAnalyzer::moveRawTurtleOperations()
 {
-    return coords;
+    return std::move(rawTurtleOperations);
+}
+
+UtmostTurtleCoordinates CodeAnalyzer::getUtmostCoordinates()
+{
+    return utomstCoordinates;
 }
 
 void CodeAnalyzer::interpretLiteralExecution(const parser_namespace::LiteralExecution *statement)
@@ -55,8 +56,7 @@ void CodeAnalyzer::interpretLiteralExecution(const parser_namespace::LiteralExec
     {
         const Variable *variable = variableMap.find(literal->getLiteral());
         if(variable == nullptr)
-            throw SemanticsException("access to undefined variable " + literal->getLiteral() +
-                "\n(from " + literal->getPositionBegin().toString() + " to " + literal->getPositionEnd().toString() + ")");
+            throw SemanticsException("access to undefined variable " + literal->getLiteral(), *literal);
         interpretVariableExecution(*variable);
     }
 }
@@ -68,7 +68,7 @@ void CodeAnalyzer::interpretVariableExecution(const Variable &variable)
         for(const std::unique_ptr<TurtleOperation> &operation : variable.getOperations())
         {
             operation->apply(turtleState);
-            turtleOperationsToReturn.push_back(operation->clone());
+            rawTurtleOperations.push_back(operation->clone());
         }
     }
     else // variable.hasEvaluation() - no other option
@@ -83,5 +83,5 @@ void CodeAnalyzer::interpretTurtleOperationExecution(const parser_namespace::Tur
 {
     std::unique_ptr<TurtleOperation> operation(TurtleOperation::create(*statement->turtleOperation));
     operation->apply(turtleState);
-    turtleOperationsToReturn.push_back(std::move(operation));
+    rawTurtleOperations.push_back(std::move(operation));
 }

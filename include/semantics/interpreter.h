@@ -18,27 +18,27 @@ public:
     void run();
 
 private:
-    TurtleState turtleState;
     DrawingContext drawingContext;
 };
 
 class CodeAnalyzer
 {
 public:
+    // CodeAnalyzer fills in all the data in the constructor.
+    // After getting utomstCoordinates and rawTurtleOperations it can be destroyed.
     CodeAnalyzer(std::istream &input);
 
-    // returns vector of raw turtle operations (after evaluating all variables etc.) and fills in StartingData
-    std::vector<std::unique_ptr<TurtleOperation>> &&interpret();
-    UtmostTurtleCoordinates &getUtmostCoordinates();
+    std::vector<std::unique_ptr<TurtleOperation>> &&moveRawTurtleOperations();
+    UtmostTurtleCoordinates getUtmostCoordinates();
 
 private:
     lexer_namespace::Source source;
     lexer_namespace::Lexer lexer;
     parser_namespace::Parser parser;
-    TurtleState turtleState;
-    UtmostTurtleCoordinates coords;
     VariableMap variableMap;
-    std::vector<std::unique_ptr<TurtleOperation>> turtleOperationsToReturn;
+    TurtleState turtleState;
+    UtmostTurtleCoordinates utomstCoordinates;
+    std::vector<std::unique_ptr<TurtleOperation>> rawTurtleOperations; // (after evaluating all variables etc.)
 
     void interpretLiteralExecution(const parser_namespace::LiteralExecution *statement);
     void interpretVariableExecution(const Variable &variable);

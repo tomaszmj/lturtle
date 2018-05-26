@@ -45,19 +45,22 @@ std::vector<std::unique_ptr<TurtleOperation> > &&CodeAnalyzer::moveRawTurtleOper
     return std::move(rawTurtleOperations);
 }
 
-UtmostTurtleCoordinates CodeAnalyzer::getUtmostCoordinates()
+const UtmostTurtleCoordinates &CodeAnalyzer::getUtmostCoordinates() const
 {
     return utomstCoordinates;
+}
+
+const VariableMap &CodeAnalyzer::getVariableMap() const
+{
+    return variableMap;
 }
 
 void CodeAnalyzer::interpretLiteralExecution(const parser_namespace::LiteralExecution *statement)
 {
     for(const std::unique_ptr<lexer_namespace::Token> &literal : statement->literals->literalsVector)
     {
-        const Variable *variable = variableMap.find(literal->getLiteral());
-        if(variable == nullptr)
-            throw SemanticsException("access to undefined variable " + literal->getLiteral(), *literal);
-        interpretVariableExecution(*variable);
+        const Variable &variable = variableMap.findOrThrow(*literal);
+        interpretVariableExecution(variable);
     }
 }
 

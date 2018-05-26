@@ -5,6 +5,8 @@
 
 using namespace semantics_namespace;
 
+std::vector<TurtleState> TurtleOperation::stateStack;
+
 std::unique_ptr<TurtleOperation> TurtleOperation::create(parser_namespace::TurtleOperation &operation)
 {
     switch(operation.type)

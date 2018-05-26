@@ -29,7 +29,8 @@ public:
     CodeAnalyzer(std::istream &input);
 
     std::vector<std::unique_ptr<TurtleOperation>> &&moveRawTurtleOperations();
-    UtmostTurtleCoordinates getUtmostCoordinates();
+    const UtmostTurtleCoordinates &getUtmostCoordinates() const;
+    const VariableMap &getVariableMap() const;
 
 private:
     lexer_namespace::Source source;

@@ -53,7 +53,7 @@ void VariableMap::defineOperation(const parser_namespace::Operation &definition)
 
 void VariableMap::defineProduction(const parser_namespace::Production &definition)
 {
-    Variable &var = findOrThrow(*definition.literal);
+    Variable &var = findOrThrowNonconst(*definition.literal);
     if(var.hasProduction() && !definition.canRedefine)
         throw SemanticsException("attempt to redefine production of variable " + definition.literal->getLiteral() +
                                  " without 'redefine'", *definition.literal);
@@ -61,7 +61,7 @@ void VariableMap::defineProduction(const parser_namespace::Production &definitio
     var.production.reserve(definition.literals->literalsVector.size());
     var.production.clear();
     for(const std::unique_ptr<lexer_namespace::Token> &literal : definition.literals->literalsVector)
-        var.production.push_back(findOrThrow(*literal));
+        var.production.push_back(findOrThrowNonconst(*literal));
 }
 
 void VariableMap::defineEvaluation(const parser_namespace::Evaluation &definition)
@@ -74,7 +74,7 @@ void VariableMap::defineEvaluation(const parser_namespace::Evaluation &definitio
     std::array<std::vector<std::reference_wrapper<Variable>>, 2> vectors; // 2-element circular buffer
     vectors[0].reserve(definition.literals->literalsVector.size());
     for(const std::unique_ptr<lexer_namespace::Token> &literal : definition.literals->literalsVector)
-        vectors[0].push_back(findOrThrow(*literal));
+        vectors[0].push_back(findOrThrowNonconst(*literal));
     int from_index = 0, to_index = 1;
     while(--iterations_left >= 0)
     {
@@ -111,12 +111,17 @@ Variable *VariableMap::findNonconst(const std::string &variable_name)
     return const_cast<Variable*>(find(variable_name));
 }
 
-Variable &VariableMap::findOrThrow(const lexer_namespace::Token &literal)
+const Variable &VariableMap::findOrThrow(const lexer_namespace::Token &literal) const
 {
-    Variable *var = findNonconst(literal.getLiteral());
+    const Variable *var = find(literal.getLiteral());
     if(var == nullptr)
         throw SemanticsException("access to undefined variable " + literal.getLiteral(), literal);
     return *var;
+}
+
+Variable &VariableMap::findOrThrowNonconst(const lexer_namespace::Token &literal)
+{
+    return const_cast<Variable&>(findOrThrow(literal));
 }
 
 Variable &VariableMap::insertOrFindAndRedefine(const parser_namespace::Definition &definition)

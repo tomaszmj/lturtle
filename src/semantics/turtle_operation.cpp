@@ -1,7 +1,6 @@
 #include "turtle_operation.h"
 #include "syntax_tree.h"
-#include "turtle_state.h"
-#include "drawing_context.h"
+#include "drawing_helpers.h"
 
 using namespace semantics_namespace;
 

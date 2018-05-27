@@ -2,9 +2,8 @@
 #include "lexer.h"
 #include "parser.h"
 #include "syntax_tree.h"
-#include "drawing_context.h"
 #include "turtle_operation.h"
-#include "turtle_state.h"
+#include "drawing_helpers.h"
 #include "variable.h"
 #include <istream>
 
@@ -18,7 +17,7 @@ public:
     void run();
 
 private:
-    DrawingContext drawingContext;
+    //DrawingContext drawingContext;
 };
 
 }

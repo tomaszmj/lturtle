@@ -3,9 +3,8 @@
 #include "parser.h"
 #include "syntax_tree.h"
 #include "turtle_operation.h"
-#include "turtle_state.h"
+#include "drawing_helpers.h"
 #include "variable.h"
-#include "drawing_context.h"
 #include <istream>
 
 namespace semantics_namespace

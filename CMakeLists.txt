@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.9)
 project(lturtle)
 
+find_package(SFML 2 REQUIRED COMPONENTS graphics system)
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 enable_testing()
 
@@ -18,7 +19,7 @@ add_executable(lexer_tests src/tests/test_lexer.cpp)
 add_executable(parser_tests src/tests/test_parser.cpp)
 add_executable(semantics_tests src/tests/test_semantics.cpp)
 
-target_link_libraries(lturtle lturtle_core)
+target_link_libraries(lturtle lturtle_core ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
 target_link_libraries(lexer_tests lturtle_core ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 target_link_libraries(parser_tests lturtle_core ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})
 target_link_libraries(semantics_tests lturtle_core ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY})

@@ -1,4 +1,4 @@
-#include "interpreter.h"
+#include "code_analyzer.h"
 #include "exception.h"
 #include <string>
 #include <sstream>

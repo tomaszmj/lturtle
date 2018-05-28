@@ -20,12 +20,15 @@ private:
     float maxX, minX, maxY, minY;
 };
 
-struct DrawingContext
+class DrawingContext
 {
+public:
     DrawingContext(const UtmostTurtleCoordinates &coord);
     void save(const std::string &filename);
-    sf::RenderTexture target;
+    void drawLine(const TurtleState &state, float length);
 
+private:
+    sf::RenderTexture target;
     const std::pair<float, float> middlePoint;
     static const sf::Color defaultColour;
 };

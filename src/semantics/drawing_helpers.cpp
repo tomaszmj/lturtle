@@ -28,12 +28,24 @@ DrawingContext::DrawingContext(const UtmostTurtleCoordinates &coord)
     unsigned height = static_cast<unsigned>(coord.getMaxY() - coord.getMinY()) + 4;
     target.create(width, height);
     target.clear(defaultColour);
+    target.setSmooth(true);
 }
 
 void DrawingContext::save(const std::string &filename)
 {
     if(!target.getTexture().copyToImage().saveToFile(filename))
         throw Exception("failed to save image in file " + filename);
+}
+
+void DrawingContext::drawLine(const TurtleState &state, float length)
+{
+    if(state.pendown)
+        return;
+    sf::RectangleShape line(sf::Vector2f(state.scale * length, state.scale * state.pensize));
+    line.setRotation(state.rotation);
+    line.setFillColor(state.pencolour);
+    line.setPosition(state.position.first + middlePoint.first, state.position.second + middlePoint.second);
+    target.draw(line);
 }
 
 TurtleState::TurtleState()

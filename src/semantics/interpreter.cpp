@@ -19,5 +19,6 @@ void Interpreter::run(std::istream &input, const std::string output_filename)
     DrawingContext context(utmost_turtle_coordinates);
     TurtleState state;
     for(auto &operation : raw_turtle_operations)
+        operation->applyAndDraw(state, context);
     context.save(output_filename);
 }

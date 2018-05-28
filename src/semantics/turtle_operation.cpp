@@ -58,9 +58,12 @@ std::unique_ptr<TurtleOperation> TurtleOperation::create(parser_namespace::Turtl
     return std::unique_ptr<TurtleOperation>(nullptr); // suppress compiler warning (impossible - all swich cases exhausted)
 }
 
-void TurtleOperation::resetStateStack()
+bool TurtleOperation::emptyStateStack()
 {
+    if(stateStack.empty())
+        return true;
     stateStack.clear();
+    return false;
 }
 
 TurtleOperationForward::TurtleOperationForward(parser_namespace::TurtleOperation &operation)
@@ -83,12 +86,16 @@ std::unique_ptr<TurtleOperation> TurtleOperationForward::clone() const
 
 void TurtleOperationForward::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    state.position.first += state.scale * arg * std::cos(state.rotation);
+    state.position.second += state.scale * arg * std::sin(state.rotation);
+    coords.update(state.position);
 }
 
 void TurtleOperationForward::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    state.position.first += state.scale * arg * std::cos(state.rotation);
+    state.position.second += state.scale * arg * std::sin(state.rotation);
+    //TODO
 }
 
 TurtleOperationRotate::TurtleOperationRotate(parser_namespace::TurtleOperation &operation)
@@ -111,12 +118,14 @@ std::unique_ptr<TurtleOperation> TurtleOperationRotate::clone() const
 
 void TurtleOperationRotate::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    state.rotation += arg;
+    (void)coords; // not changed
 }
 
 void TurtleOperationRotate::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    state.rotation += arg;
+    (void)context; // nothing to draw
 }
 
 std::unique_ptr<TurtleOperation> TurtleOperationPenup::clone() const
@@ -126,12 +135,14 @@ std::unique_ptr<TurtleOperation> TurtleOperationPenup::clone() const
 
 void TurtleOperationPenup::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    state.pendown = false;
+    (void)coords; // not changed
 }
 
 void TurtleOperationPenup::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    state.pendown = false;
+    (void)context; // nothing to draw
 }
 
 std::unique_ptr<TurtleOperation> TurtleOperationPendown::clone() const
@@ -141,12 +152,14 @@ std::unique_ptr<TurtleOperation> TurtleOperationPendown::clone() const
 
 void TurtleOperationPendown::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    state.pendown = true;
+    (void)coords; // not changed
 }
 
 void TurtleOperationPendown::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    state.pendown = true;
+    (void)context; // nothing to draw
 }
 
 TurtleOperationPencolour::TurtleOperationPencolour(parser_namespace::TurtleOperation &operation)
@@ -177,24 +190,26 @@ std::unique_ptr<TurtleOperation> TurtleOperationPencolour::clone() const
 
 void TurtleOperationPencolour::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    state.pencolour = sf::Color(colour[0], colour[1], colour[2]);
+    (void)coords; // not changed
 }
 
 void TurtleOperationPencolour::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    state.pencolour = sf::Color(colour[0], colour[1], colour[2]);
+    (void)context; // nothing to draw
 }
 
 TurtleOperationGoto::TurtleOperationGoto(parser_namespace::TurtleOperation &operation)
 {
     checkNumberOfArguments(operation, 2, "goto");
     auto &numbers = operation.arguments->numbers;
-    x = numbers[0]->getFloat();
-    y = numbers[1]->getFloat();
+    position.first = numbers[0]->getFloat();
+    position.second = numbers[1]->getFloat();
 }
 
 TurtleOperationGoto::TurtleOperationGoto(const TurtleOperationGoto &other)
-    : x(other.x), y(other.y)
+    : position(other.position)
 {}
 
 std::unique_ptr<TurtleOperation> TurtleOperationGoto::clone() const
@@ -204,12 +219,14 @@ std::unique_ptr<TurtleOperation> TurtleOperationGoto::clone() const
 
 void TurtleOperationGoto::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    state.position = position;
+    coords.update(state.position);
 }
 
 void TurtleOperationGoto::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    state.position = position;
+    (void)context; // nothing to draw
 }
 
 TurtleOperationPensize::TurtleOperationPensize(parser_namespace::TurtleOperation &operation)
@@ -232,12 +249,14 @@ std::unique_ptr<TurtleOperation> TurtleOperationPensize::clone() const
 
 void TurtleOperationPensize::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    state.pensize = arg;
+    (void)coords; // not changed
 }
 
 void TurtleOperationPensize::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    state.pensize = arg;
+    (void)context; // nothing to draw
 }
 
 TurtleOperationScale::TurtleOperationScale(parser_namespace::TurtleOperation &operation)
@@ -260,12 +279,14 @@ std::unique_ptr<TurtleOperation> TurtleOperationScale::clone() const
 
 void TurtleOperationScale::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    state.scale = arg;
+    (void)coords; // not changed
 }
 
 void TurtleOperationScale::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    state.scale = arg;
+    (void)context; // nothing to draw
 }
 
 std::unique_ptr<TurtleOperation> TurtleOperationPushstate::clone() const
@@ -275,12 +296,14 @@ std::unique_ptr<TurtleOperation> TurtleOperationPushstate::clone() const
 
 void TurtleOperationPushstate::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    stateStack.push_back(state);
+    (void)coords; // not changed
 }
 
 void TurtleOperationPushstate::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+    stateStack.push_back(state);
+    (void)context; // nothing to draw
 }
 
 std::unique_ptr<TurtleOperation> TurtleOperationPopstate::clone() const
@@ -290,10 +313,21 @@ std::unique_ptr<TurtleOperation> TurtleOperationPopstate::clone() const
 
 void TurtleOperationPopstate::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-
+    if(stateStack.empty()) // it CAN happen, due to error made by Lturtle user
+        throw std::out_of_range("popstate on an empty stack");
+    state = stateStack.back();
+    stateStack.pop_back();
+    (void)coords; // state changed, but previously pushed coordinates have already been used somewhere in coords.udpate
 }
 
 void TurtleOperationPopstate::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-
+#ifdef DEBUG
+    // it should not happen, because operation applyAndUpdateUtmostCoordinates has already been called in the same context
+    if(stateStack.empty())
+        throw std::out_of_range("popstate on an empty stack in TurtleOperationPopstate::applyAndDraw");
+#endif
+    state = stateStack.back();
+    stateStack.pop_back();
+    (void)context; // nothing to draw
 }

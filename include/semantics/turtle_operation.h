@@ -19,7 +19,7 @@ class TurtleOperation
 {
 public:
     static std::unique_ptr<TurtleOperation> create(parser_namespace::TurtleOperation &operation);
-    static void resetStateStack();
+    static bool emptyStateStack(); // clears contents of stateStack, returns true if it was already empty, false otherwise
     virtual ~TurtleOperation() {}
     virtual std::unique_ptr<TurtleOperation> clone() const = 0;
     virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords) = 0;
@@ -98,7 +98,7 @@ public:
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
-    float x, y;
+    std::pair<float, float> position;
 };
 
 class TurtleOperationPensize : public TurtleOperation

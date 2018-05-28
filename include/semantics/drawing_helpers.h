@@ -6,9 +6,18 @@
 namespace semantics_namespace
 {
 
-struct UtmostTurtleCoordinates // needed to initialize DrawingContext, calculated in CodeAnalyzer
+class UtmostTurtleCoordinates // needed to initialize DrawingContext
 {
-    float maxX, maxY, minX, minY;
+public:
+    UtmostTurtleCoordinates(const std::pair<float, float> &starting_pos);
+    void update(const std::pair<float, float> &pos); // used in turtle operations called by CodeAnalyzer
+    float getMaxX() const { return maxX; }
+    float getMinX() const { return minX; }
+    float getMaxY() const { return maxY; }
+    float getMinY() const { return minY; }
+
+private:
+    float maxX, minX, maxY, minY;
 };
 
 struct DrawingContext

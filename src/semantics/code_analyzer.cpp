@@ -4,29 +4,46 @@
 using namespace semantics_namespace;
 
 CodeAnalyzer::CodeAnalyzer(std::istream &input)
-    : source(input), lexer(source), parser(lexer)
+    : source(input), lexer(source), parser(lexer), utmostCoordinates(std::pair<float, float>(0, 0))
 {
     std::unique_ptr<parser_namespace::Statement> statement;
-    while((statement = parser.parseStatement()) != nullptr)
+    try
     {
-        switch(statement->getType())
+        while((statement = parser.parseStatement()) != nullptr)
         {
-            case parser_namespace::Statement::operation:
-                variableMap.defineOperation(*dynamic_cast<parser_namespace::Operation*>(statement.get()));
-                break;
-            case parser_namespace::Statement::production:
-                variableMap.defineProduction(*dynamic_cast<parser_namespace::Production*>(statement.get()));
-                break;
-            case parser_namespace::Statement::evaluation:
-                variableMap.defineEvaluation(*dynamic_cast<parser_namespace::Evaluation*>(statement.get()));
-                break;
-            case parser_namespace::Statement::literal_execution:
-                interpretLiteralExecution(dynamic_cast<parser_namespace::LiteralExecution*>(statement.get()));
-                break;
-            case parser_namespace::Statement::turtle_operation_execution:
-                interpretTurtleOperationExecution(dynamic_cast<parser_namespace::TurtleOperationExecution*>(statement.get()));
-                break;
+            switch(statement->getType())
+            {
+                case parser_namespace::Statement::operation:
+                    variableMap.defineOperation(*dynamic_cast<parser_namespace::Operation*>(statement.get()));
+                    break;
+                case parser_namespace::Statement::production:
+                    variableMap.defineProduction(*dynamic_cast<parser_namespace::Production*>(statement.get()));
+                    break;
+                case parser_namespace::Statement::evaluation:
+                    variableMap.defineEvaluation(*dynamic_cast<parser_namespace::Evaluation*>(statement.get()));
+                    break;
+                case parser_namespace::Statement::literal_execution:
+                    interpretLiteralExecution(dynamic_cast<parser_namespace::LiteralExecution*>(statement.get()));
+                    break;
+                case parser_namespace::Statement::turtle_operation_execution:
+                    interpretTurtleOperationExecution(dynamic_cast<parser_namespace::TurtleOperationExecution*>(statement.get()));
+                    break;
+            }
         }
+    }
+    catch(const std::out_of_range &ex)
+    {
+        if(statement)
+            throw SemanticsException(std::string(ex.what()) + " in statement:\n" + statement->toString());
+        else
+            throw SemanticsException(std::string(ex.what()) + " in undefined statement (begin or end of file)\n");
+    }
+    catch(const std::bad_alloc&)
+    {
+        if(statement)
+            throw SemanticsException("failed to allocate memory in statement:\n" + statement->toString());
+        else
+            throw SemanticsException("failed to allocate memory in undefined statement (begin or end of file)\n");
     }
 }
 

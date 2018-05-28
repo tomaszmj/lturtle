@@ -1,0 +1,9 @@
+s0 = { forward(1.0); };
+s1 = { forward(2.0); };
+left = { pushstate(); rotate(-45.0); };
+right = { popstate(); rotate(45.0); };
+s1 -> s1 + s1;
+s0 -> s1 + left + s0 + right + s0;
+tree3 = evaluate(3, s0);
+scale(50);
+execute(tree3);

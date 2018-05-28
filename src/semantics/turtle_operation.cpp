@@ -93,9 +93,9 @@ void TurtleOperationForward::applyAndUpdateUtmostCoordinates(TurtleState &state,
 
 void TurtleOperationForward::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
+    context.drawLine(state, arg);
     state.position.first += state.scale * arg * std::cos(state.rotation);
     state.position.second += state.scale * arg * std::sin(state.rotation);
-    //TODO
 }
 
 TurtleOperationRotate::TurtleOperationRotate(parser_namespace::TurtleOperation &operation)

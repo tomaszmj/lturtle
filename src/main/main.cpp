@@ -1,28 +1,45 @@
 #include "lexer.h"
 #include "source.h"
 #include "parser.h"
+#include "interpreter.h"
 #include "exception.h"
 #include <iostream>
 #include <memory>
 
-std::ostream& operator<<(std::ostream &os, const lexer_namespace::Lexer::TokenPtr &token);
+void print_help(char *program_name)
+{
+    std::cerr << "Usage: " << program_name << " <argument>\n"
+                 "<argument> can be:\n"
+                 "--lexer : runs only lexer test, giving list of tokens\n"
+                 "--parser : runs only parser test, output should be the same as input, excluding comments and whitespace\n"
+                 "(any other - output image filename) : runs interpreter, saving result in a file\n\n"
+                 "Regardless of mode used, program uses standard input - in order to interpret file, redirect it, for example:\n" <<
+                 program_name << " image.png <code.lturtle\n";
+    std::exit(-1);
+}
+
 void run_lexer_test();
 void run_parser_test();
 
 int main(int argc, char **argv)
 {
-    (void) argc;
-    (void) argv;
     std::ios_base::sync_with_stdio(false); // see: https://stackoverflow.com/questions/9371238/why-is-reading-lines-from-stdin-much-slower-in-c-than-python?rq=1
+    if(argc != 2)
+        print_help(argv[0]);
     try
     {
-        run_parser_test();
+        if(std::string(argv[1]) == "--lexer")
+            run_lexer_test();
+        else if(std::string(argv[1]) == "--parser")
+            run_parser_test();
+        else
+            semantics_namespace::Interpreter::run(std::cin, argv[1]);
         return 0;
     }
-    catch(const Exception &ex)
+    catch(const std::exception &ex)
     {
         std::cout << ex.what();
-        return -1;
+        return -2;
     }
 }
 

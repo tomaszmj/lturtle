@@ -1,6 +1,7 @@
 #include "interpreter.h"
 #include "code_analyzer.h"
 #include "exception.h"
+#include "iostream"
 
 using namespace semantics_namespace;
 
@@ -13,9 +14,10 @@ void Interpreter::run(std::istream &input, const std::string output_filename)
         raw_turtle_operations = code_analyzer.moveRawTurtleOperations();
         utmost_turtle_coordinates = code_analyzer.getUtmostCoordinates();
     } // deleting CodeAnalyzer, with its parser, variable map etc. - it is no longer needed
+    if(!TurtleOperation::emptyStateStack())
+        std::cerr << "warning - state stack nonempty (number of pushstate operations was greater than number of popstate operations)\n";
     DrawingContext context(utmost_turtle_coordinates);
     TurtleState state;
     for(auto &operation : raw_turtle_operations)
-        operation->applyAndDraw(state, context);
     context.save(output_filename);
 }

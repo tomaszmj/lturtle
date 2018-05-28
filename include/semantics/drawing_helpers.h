@@ -6,6 +6,18 @@
 namespace semantics_namespace
 {
 
+struct TurtleState
+{
+    sf::Color pencolour;
+    bool pendown;
+    std::pair<float, float> position;
+    float rotation;
+    float pensize;
+    float scale;
+
+    TurtleState();
+};
+
 class UtmostTurtleCoordinates // needed to initialize DrawingContext
 {
 public:
@@ -31,18 +43,6 @@ private:
     sf::RenderTexture target;
     const std::pair<float, float> middlePoint;
     static const sf::Color defaultColour;
-};
-
-struct TurtleState
-{
-    sf::Color pencolour;
-    bool pendown;
-    std::pair<float, float> position;
-    float rotation;
-    float pensize;
-    float scale;
-
-    TurtleState();
 };
 
 }

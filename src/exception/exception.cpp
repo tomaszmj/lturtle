@@ -26,5 +26,5 @@ SemanticsException::SemanticsException(std::string &&message)
 
 SemanticsException::SemanticsException(std::string &&message, const lexer_namespace::Token &literal)
     : Exception("Semantic error: " + message +
-                "\n(from " + literal.getPositionBegin().toString() + " to " + literal.getPositionEnd().toString() + ")")
+                "\n(at token from " + literal.getPositionBegin().toString() + " to " + literal.getPositionEnd().toString() + ")")
 {}

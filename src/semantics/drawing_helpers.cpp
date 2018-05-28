@@ -6,6 +6,7 @@ using namespace semantics_namespace;
 const sf::Color DrawingContext::defaultColour(255, 255, 255);
 
 DrawingContext::DrawingContext(const UtmostTurtleCoordinates &coord)
+    : middlePoint((coord.maxX + coord.minX)/2.0f, (coord.maxY + coord.minY)/2.0f)
 {
     unsigned width = static_cast<unsigned>(coord.maxX - coord.minX) + 4; // +4 - 2-pixel margin
     unsigned height = static_cast<unsigned>(coord.maxY - coord.minY) + 4;

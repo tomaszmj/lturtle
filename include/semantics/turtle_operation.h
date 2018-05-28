@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <array>
 
 namespace parser_namespace
 {
@@ -12,6 +13,7 @@ namespace semantics_namespace
 
 class TurtleState;
 class DrawingContext;
+class UtmostTurtleCoordinates;
 
 class TurtleOperation
 {
@@ -20,7 +22,7 @@ public:
     static void resetStateStack();
     virtual ~TurtleOperation() {}
     virtual std::unique_ptr<TurtleOperation> clone() const = 0;
-    virtual void apply(TurtleState &state) = 0;
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords) = 0;
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context) = 0;
 
 protected:
@@ -33,7 +35,7 @@ public:
     TurtleOperationForward(parser_namespace::TurtleOperation &operation);
     TurtleOperationForward(const TurtleOperationForward &other);
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
@@ -46,7 +48,7 @@ public:
     TurtleOperationRotate(parser_namespace::TurtleOperation &operation);
     TurtleOperationRotate(const TurtleOperationRotate &other);
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
@@ -57,7 +59,7 @@ class TurtleOperationPenup : public TurtleOperation
 {
 public:
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
@@ -67,7 +69,7 @@ class TurtleOperationPendown : public TurtleOperation
 {
 public:
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
@@ -79,11 +81,11 @@ public:
     TurtleOperationPencolour(parser_namespace::TurtleOperation &operation);
     TurtleOperationPencolour(const TurtleOperationPencolour &other);
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
-    uint8_t r, g, b;
+    std::array<uint8_t, 3> colour;
 };
 
 class TurtleOperationGoto : public TurtleOperation
@@ -92,7 +94,7 @@ public:
     TurtleOperationGoto(parser_namespace::TurtleOperation &operation);
     TurtleOperationGoto(const TurtleOperationGoto &other);
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
@@ -105,7 +107,7 @@ public:
     TurtleOperationPensize(parser_namespace::TurtleOperation &operation);
     TurtleOperationPensize(const TurtleOperationPensize &other);
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
@@ -118,7 +120,7 @@ public:
     TurtleOperationScale(parser_namespace::TurtleOperation &operation);
     TurtleOperationScale(const TurtleOperationScale &other);
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
@@ -129,7 +131,7 @@ class TurtleOperationPushstate : public TurtleOperation
 {
 public:
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:
@@ -139,7 +141,7 @@ class TurtleOperationPopstate : public TurtleOperation
 {
 public:
     virtual std::unique_ptr<TurtleOperation> clone() const;
-    virtual void apply(TurtleState &state);
+    virtual void applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords);
     virtual void applyAndDraw(TurtleState &state, DrawingContext &context);
 
 private:

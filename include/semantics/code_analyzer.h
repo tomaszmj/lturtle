@@ -26,7 +26,7 @@ private:
     parser_namespace::Parser parser;
     VariableMap variableMap;
     TurtleState turtleState;
-    UtmostTurtleCoordinates utomstCoordinates;
+    UtmostTurtleCoordinates utmostCoordinates;
     std::vector<std::unique_ptr<TurtleOperation>> rawTurtleOperations; // (after evaluating all variables etc.)
 
     void interpretLiteralExecution(const parser_namespace::LiteralExecution *statement);

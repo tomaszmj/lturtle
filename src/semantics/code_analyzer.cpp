@@ -37,7 +37,7 @@ std::vector<std::unique_ptr<TurtleOperation> > &&CodeAnalyzer::moveRawTurtleOper
 
 const UtmostTurtleCoordinates &CodeAnalyzer::getUtmostCoordinates() const
 {
-    return utomstCoordinates;
+    return utmostCoordinates;
 }
 
 const VariableMap &CodeAnalyzer::getVariableMap() const
@@ -60,7 +60,7 @@ void CodeAnalyzer::interpretVariableExecution(const Variable &variable)
     {
         for(const std::unique_ptr<TurtleOperation> &operation : variable.getOperations())
         {
-            operation->apply(turtleState);
+            operation->applyAndUpdateUtmostCoordinates(turtleState, utmostCoordinates);
             rawTurtleOperations.push_back(operation->clone());
         }
     }
@@ -75,6 +75,6 @@ void CodeAnalyzer::interpretVariableExecution(const Variable &variable)
 void CodeAnalyzer::interpretTurtleOperationExecution(const parser_namespace::TurtleOperationExecution *statement)
 {
     std::unique_ptr<TurtleOperation> operation(TurtleOperation::create(*statement->turtleOperation));
-    operation->apply(turtleState);
+    operation->applyAndUpdateUtmostCoordinates(turtleState, utmostCoordinates);
     rawTurtleOperations.push_back(std::move(operation));
 }

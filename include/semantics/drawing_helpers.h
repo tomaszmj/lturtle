@@ -17,6 +17,7 @@ struct DrawingContext
     void save(const std::string &filename);
     sf::RenderTexture target;
 
+    const std::pair<float, float> middlePoint;
     static const sf::Color defaultColour;
 };
 

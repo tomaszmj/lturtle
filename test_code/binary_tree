@@ -4,6 +4,7 @@ left = { pushstate(); rotate(-45.0); };
 right = { popstate(); rotate(45.0); };
 s1 -> s1 + s1;
 s0 -> s1 + left + s0 + right + s0;
-tree3 = evaluate(3, s0);
+tree3 = evaluate(5, s0);
 scale(50);
+pensize(0.1);
 execute(tree3);

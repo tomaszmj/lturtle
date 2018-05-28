@@ -1,0 +1,7 @@
+step = { forward(100.0); rotate(90.0); };
+sqaure_step = {}; # empty instruction list - allowed
+sqaure_step -> sqaure_step + step;
+square = evaluate(4, sqaure_step);
+pencolour(255, 0, 0); # direct execution of turtle command
+pensize(5);
+execute(square);

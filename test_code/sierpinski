@@ -1,0 +1,11 @@
+rotate(30);
+F = { forward(100); };
+G = { forward(100); };
+l = { rotate(-120); };
+r = { rotate(120); };
+F -> F + r + G + l + F + l + G + r + F;
+G -> G + G;
+triangle = evaluate(4, F + r + G + r + G);
+pensize(2);
+pencolour(0, 0, 255);
+execute(triangle);

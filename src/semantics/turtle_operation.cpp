@@ -4,6 +4,9 @@
 #include "exception.h"
 #include "token.h"
 #include <cmath>
+#ifdef DEBUG
+#include <iostream>
+#endif
 
 using namespace semantics_namespace;
 
@@ -86,16 +89,22 @@ std::unique_ptr<TurtleOperation> TurtleOperationForward::clone() const
 
 void TurtleOperationForward::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-    state.position.first += state.scale * arg * std::cos(state.rotation);
-    state.position.second += state.scale * arg * std::sin(state.rotation);
+    state.position.first += state.scale * arg * std::cos(state.rotation * M_PI / 180.0); // change to radians
+    state.position.second += state.scale * arg * std::sin(state.rotation * M_PI / 180.0);
     coords.update(state.position);
 }
 
 void TurtleOperationForward::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
     context.drawLine(state, arg);
-    state.position.first += state.scale * arg * std::cos(state.rotation);
-    state.position.second += state.scale * arg * std::sin(state.rotation);
+#ifdef DEBUG
+    std::cerr << "drawing line from (" << state.position.first << ", " << state.position.second << ") ";
+#endif
+    state.position.first += state.scale * arg * std::cos(state.rotation * M_PI / 180.0);
+    state.position.second += state.scale * arg * std::sin(state.rotation * M_PI / 180.0);
+#ifdef DEBUG
+    std::cerr << "to (" << state.position.first << ", " << state.position.second << ")\n";
+#endif
 }
 
 TurtleOperationRotate::TurtleOperationRotate(parser_namespace::TurtleOperation &operation)
@@ -118,13 +127,13 @@ std::unique_ptr<TurtleOperation> TurtleOperationRotate::clone() const
 
 void TurtleOperationRotate::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
-    state.rotation += arg;
+    state.rotation -= arg; // '-' because positive arguments - turn clockwise, negative - counter-clockwise
     (void)coords; // not changed
 }
 
 void TurtleOperationRotate::applyAndDraw(TurtleState &state, DrawingContext &context)
 {
-    state.rotation += arg;
+    state.rotation -= arg;
     (void)context; // nothing to draw
 }
 
@@ -250,7 +259,7 @@ std::unique_ptr<TurtleOperation> TurtleOperationPensize::clone() const
 void TurtleOperationPensize::applyAndUpdateUtmostCoordinates(TurtleState &state, UtmostTurtleCoordinates &coords)
 {
     state.pensize = arg;
-    (void)coords; // not changed
+    coords.update(state.pensize);
 }
 
 void TurtleOperationPensize::applyAndDraw(TurtleState &state, DrawingContext &context)

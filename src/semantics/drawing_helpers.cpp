@@ -1,5 +1,8 @@
 #include "drawing_helpers.h"
 #include "exception.h"
+#ifdef DEBUG
+#include <iostream>
+#endif
 
 using namespace semantics_namespace;
 
@@ -8,28 +11,34 @@ TurtleState::TurtleState()
 {}
 
 UtmostTurtleCoordinates::UtmostTurtleCoordinates(const std::pair<float, float> &starting_pos)
-    : maxX(starting_pos.first), minX(starting_pos.first), maxY(starting_pos.second), minY(starting_pos.second)
+    : maxX(starting_pos.first), minX(starting_pos.first), maxY(starting_pos.second), minY(starting_pos.second), margin(1.0)
 {}
 
-void UtmostTurtleCoordinates::update(const std::pair<float, float> &pos)
+void UtmostTurtleCoordinates::update(const std::pair<float, float> &position)
 {
-    if(pos.first < minX)
-        minX = pos.first;
-    if(pos.first > maxX)
-        maxX = pos.first;
-    if(pos.second < minY)
-        minY = pos.second;
-    if(pos.second > maxY)
-        maxY = pos.second;
+    if(position.first < minX)
+        minX = position.first;
+    if(position.first > maxX)
+        maxX = position.first;
+    if(position.second < minY)
+        minY = position.second;
+    if(position.second > maxY)
+        maxY = position.second;
+}
+
+void UtmostTurtleCoordinates::update(float pensize)
+{
+    if(pensize > margin)
+        margin = pensize;
 }
 
 const sf::Color DrawingContext::defaultColour(255, 255, 255);
 
 DrawingContext::DrawingContext(const UtmostTurtleCoordinates &coord)
-    : middlePoint((coord.getMaxX() + coord.getMinX())/2.0f, (coord.getMaxY() + coord.getMinY())/2.0f)
+    : xNegativeOffset(coord.getMinX() - coord.getMargin()), yPositiveOffset(coord.getMaxY() + coord.getMargin())
 {
-    unsigned width = static_cast<unsigned>(coord.getMaxX() - coord.getMinX()) + 4; // +4 - 2-pixel margin
-    unsigned height = static_cast<unsigned>(coord.getMaxY() - coord.getMinY()) + 4;
+    unsigned width = static_cast<unsigned>(coord.getMaxX() - coord.getMinX() + 2*coord.getMargin());
+    unsigned height = static_cast<unsigned>(coord.getMaxY() - coord.getMinY() + 2*coord.getMargin());
     target.create(width, height);
     target.clear(defaultColour);
     target.setSmooth(true);
@@ -37,8 +46,7 @@ DrawingContext::DrawingContext(const UtmostTurtleCoordinates &coord)
 
 void DrawingContext::save(const std::string &filename)
 {
-    if(!target.getTexture().copyToImage().saveToFile(filename))
-        throw Exception("failed to save image in file " + filename);
+    target.getTexture().copyToImage().saveToFile(filename); // SFML "witout asking" itself prints error message
 }
 
 void DrawingContext::drawLine(const TurtleState &state, float length)
@@ -46,8 +54,17 @@ void DrawingContext::drawLine(const TurtleState &state, float length)
     if(!state.pendown)
         return;
     sf::RectangleShape line(sf::Vector2f(state.scale * length, state.scale * state.pensize));
-    line.setRotation(state.rotation);
+    line.setRotation(-state.rotation); // setRotation(number of DEGREES), clockwise (state.rotation is counter-clockwise)
     line.setFillColor(state.pencolour);
-    line.setPosition(state.position.first + middlePoint.first, state.position.second + middlePoint.second);
+    std::pair<float, float> point = transfromTurtleCoordinatesToImageCoordinates(state.position);
+    line.setPosition(point.first, point.second);
     target.draw(line);
+}
+
+std::pair<float, float> DrawingContext::transfromTurtleCoordinatesToImageCoordinates(const std::pair<float, float> &point) const
+{
+#ifdef DEBUG
+    std::cerr << "transfrom coordinates (" << point.first << ", " << point.second << ") -> (" << point.first - xNegativeOffset << ", " << yPositiveOffset - point.second << ")\n";
+#endif
+    return std::pair<float, float>(point.first - xNegativeOffset, yPositiveOffset - point.second);
 }

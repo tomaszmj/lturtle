@@ -1,5 +1,6 @@
 #include "code_analyzer.h"
 #include "exception.h"
+#include <set>
 
 using namespace semantics_namespace;
 
@@ -7,10 +8,12 @@ CodeAnalyzer::CodeAnalyzer(std::istream &input)
     : source(input), lexer(source), parser(lexer), utmostCoordinates(std::pair<float, float>(0, 0))
 {
     std::unique_ptr<parser_namespace::Statement> statement;
+    unsigned i = 0;
     try
     {
         while((statement = parser.parseStatement()) != nullptr)
         {
+            ++i;
             switch(statement->getType())
             {
                 case parser_namespace::Statement::operation:
@@ -31,19 +34,19 @@ CodeAnalyzer::CodeAnalyzer(std::istream &input)
             }
         }
     }
-    catch(const std::out_of_range &ex)
+    catch(std::logic_error &ex)
     {
         if(statement)
-            throw SemanticsException(std::string(ex.what()) + " in statement:\n" + statement->toString());
+            throw SemanticsException(std::string(ex.what()) + " in statement (number " + std::to_string(i) + "):\n" + statement->toString());
         else
-            throw SemanticsException(std::string(ex.what()) + " in undefined statement (begin or end of file)\n");
+            throw SemanticsException(std::string(ex.what()) + " in undefined statement (number " + std::to_string(i) + ")\n");
     }
     catch(const std::bad_alloc&)
     {
         if(statement)
-            throw SemanticsException("failed to allocate memory in statement:\n" + statement->toString());
+            throw SemanticsException("failed to allocate memory in statement (number" + std::to_string(i) + "):\n" + statement->toString());
         else
-            throw SemanticsException("failed to allocate memory in undefined statement (begin or end of file)\n");
+            throw SemanticsException("failed to allocate memory in undefined statement (number " + std::to_string(i) + ")\n");
     }
 }
 
@@ -67,6 +70,7 @@ void CodeAnalyzer::interpretLiteralExecution(const parser_namespace::LiteralExec
     for(const std::unique_ptr<lexer_namespace::Token> &literal : statement->literals->literalsVector)
     {
         const Variable &variable = variableMap.findOrThrow(*literal);
+        variablesBeingEvaluated.clear();
         interpretVariableExecution(variable);
     }
 }
@@ -83,9 +87,12 @@ void CodeAnalyzer::interpretVariableExecution(const Variable &variable)
     }
     else // variable.hasEvaluation() - no other option
     {
+        auto it = variablesBeingEvaluated.find(&variable);
+        if(it != variablesBeingEvaluated.end())
+            throw std::logic_error("endless recursion detected - self-referring evaluation");
+        variablesBeingEvaluated.insert(it, &variable);
         for(const auto &var : variable.getEvaluation())
             interpretVariableExecution(var);
-        //TODO - detect endless recursion (variable evaluated to the same variable)
     }
 }
 

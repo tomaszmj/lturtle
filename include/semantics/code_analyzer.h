@@ -6,6 +6,7 @@
 #include "drawing_helpers.h"
 #include "variable.h"
 #include <istream>
+#include <unordered_set>
 
 namespace semantics_namespace
 {
@@ -28,6 +29,7 @@ private:
     TurtleState turtleState;
     UtmostTurtleCoordinates utmostCoordinates;
     std::vector<std::unique_ptr<TurtleOperation>> rawTurtleOperations; // (after evaluating all variables etc.)
+    std::unordered_set<const Variable*> variablesBeingEvaluated;
 
     void interpretLiteralExecution(const parser_namespace::LiteralExecution *statement);
     void interpretVariableExecution(const Variable &variable);

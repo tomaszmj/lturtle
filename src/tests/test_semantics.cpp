@@ -152,3 +152,34 @@ BOOST_AUTO_TEST_CASE(variable_defineEvaluation_redefineProduction_and_execute)
     BOOST_REQUIRE(dynamic_cast<TurtleOperationForward*>(v[4].get()) != nullptr);
 }
 
+BOOST_AUTO_TEST_CASE(interpret_raw_turtle_operations)
+{
+    const std::string input = R"(
+    forward(1.0);
+    forward(1);
+    rotate(-1.0);
+    penup();
+    pendown();
+    pencolour(255, 0, 0);
+    goto(12.0, -132);
+    pensize(5);
+    scale(10.0);
+    pushstate();
+    popstate();
+    )";
+    std::istringstream iss(input);
+    CodeAnalyzer ca(iss);
+    auto v = ca.moveRawTurtleOperations();
+    BOOST_REQUIRE(v.size() == 11);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationForward*>(v[0].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationForward*>(v[1].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationRotate*>(v[2].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationPenup*>(v[3].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationPendown*>(v[4].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationPencolour*>(v[5].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationGoto*>(v[6].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationPensize*>(v[7].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationScale*>(v[8].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationPushstate*>(v[9].get()) != nullptr);
+    BOOST_REQUIRE(dynamic_cast<TurtleOperationPopstate*>(v[10].get()) != nullptr);
+}

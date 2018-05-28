@@ -19,10 +19,10 @@ It produces:
   
 #### Dependencies
 In order to build this program, you need:  
-* cmake (I used version 3.11.1)  
-* C++ (at least 11) compiler (I used gcc 7.3.1)  
-* BOOST library (unit testing component) (I used version 1.66.0-2)  
-* SFML library (I used version 2.5.0-1)  
+*  cmake (I used version 3.11.1)  
+*  C++ (at least 11) compiler (I used gcc 7.3.1)  
+*  BOOST library (unit testing component) (I used version 1.66.0-2)  
+*  SFML library (I used version 2.5.0-1)  
 
 Everything was tested on an x86-64 computer running Manjaro Linux, but program should be portable.  
   
@@ -40,9 +40,9 @@ Building auxiliary program hashtest is optional - it was needed only to generate
 #### Running  
 Usage: ./lturtle <argument>  
 <argument> can be:  
-* --lexer : runs only lexer test, giving list of tokens  
-* --parser : runs only parser test, output should be the same as input, excluding comments and whitespace  
-* (any other - output image filename) : runs interpreter, saving result in a file  
+*  --lexer : runs only lexer test, giving list of tokens  
+*  --parser : runs only parser test, output should be the same as input, excluding comments and whitespace  
+*  (any other - output image filename) : runs interpreter, saving result in a file  
   
 Regardless of mode used, program uses standard input - in order to interpret file, redirect it, for example, to run sample code creating binary tree:
 ``` 

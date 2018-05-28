@@ -1,10 +1,10 @@
-s0 = { forward(1.0); };
-s1 = { forward(2.0); };
-left = { pushstate(); rotate(-45.0); };
-right = { popstate(); rotate(45.0); };
+# based on an example on Wikipedia
+s0 = { pencolour(0, 255, 0); forward(20.0); }; # 0 from Wikipedia, make leaf green
+s1 = { pencolour(0, 0, 0); forward(40.0); }; # 1 from Wikipedia, make non-leaf black
+left = { pushstate(); rotate(-45.0); }; # [ from Wikipedia
+right = { popstate(); rotate(45.0); }; # ] from Wikipedia
 s1 -> s1 + s1;
 s0 -> s1 + left + s0 + right + s0;
-tree3 = evaluate(5, s0);
-scale(50);
-pensize(0.1);
-execute(tree3);
+tree4 = evaluate(4, s0); # evaluate 4 times, using productions given above
+pensize(2); # change lines width
+execute(tree4); # draw using instructions stored in tree4

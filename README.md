@@ -15,7 +15,7 @@ pensize(2); # change lines width
 execute(tree4); # draw using instructions stored in tree4
 ```
 It produces:  
-![](bintree.png)
+![](images/bintree.png)
   
 #### Dependencies
 In order to build this program, you need:  
@@ -46,6 +46,6 @@ Usage: ./lturtle <argument>
   
 Regardless of mode used, program uses standard input - in order to interpret file, redirect it, for example, to run sample code creating binary tree:
 ``` 
-./build/lturtle bintree.png <test_code/binary_tree  
+./build/lturtle images/bintree.png <test_code/binary_tree  
 ```
 

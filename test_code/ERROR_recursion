@@ -1,7 +1,5 @@
-x = { forward(1); };
-y = { forward(1); };
-x -> y;
-y -> x;
-redefine x = evaluate(1, x);
-redefine y = evaluate(1, y);
+# this program should produce an error, because there is self-referring evaluation (interpreter should detect it, avoiding infinite loop)
+x = { };
+y = evaluate(1, x);
+redefine x = evaluate(1, y);
 execute(x);

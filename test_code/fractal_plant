@@ -1,0 +1,20 @@
+# modified example from Wikipedia - there are 2 plants
+pensize(2);
+pushstate();
+X = {};
+F = { forward(20); };
+l = { rotate(-25); };
+r = { rotate(25); };
+push = { pushstate(); };
+pop = { popstate(); };
+X -> F + r + push + push + X + pop + l + X + pop + l + F + push + l + F + X + pop + r + X;
+F -> F + F;
+plant = evaluate(6, X);
+rotate(150);
+pencolour(0, 200, 0);
+execute(plant);
+popstate();
+rotate(-30);
+pencolour(255, 0, 0);
+scale(0.5);
+execute(plant);

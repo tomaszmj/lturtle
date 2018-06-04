@@ -38,36 +38,41 @@ Druga wersja - zamieniono rekurencję na iterację w definicji LiteralString, zm
 2: Statement = Definition | Execution
 3: Definition = Redefinition | CreateDefinition
 4: Execution = LiteralExecution | TurtleStatement
-5: LiteralExecution = execute_keyword l_round_bracket_symbol LiteralString r_round_bracket_symbol
+5: LiteralExecution = execute_keyword l_round_bracket_symbol 
+                      LiteralString r_round_bracket_symbol
 6: Redefinition = redefine_keyword CreateDefinition
 7: CreateDefinition = Operation | Production | Evaluation
 8: LiteralString = { literal plus_symbol } literal
-9: Operation = literal equals_symbol l_curly_bracket_symobl { TurtleStatement semicolon_symbol } r_curly_bracket_symbol
+9: Operation = literal equals_symbol l_curly_bracket_symobl
+               { TurtleStatement semicolon_symbol } r_curly_bracket_symbol
 10: Production = literal production_operator LiteralString
-11: Evaluation = literal equals_symbol evaluate_keyword l_round_bracket_symbol int_number colon_symbol LiteralsString l_round_bracket_symbol
-12: TurtleStatement = ForwardSt | RotateSt | PenupSt | PendownSt  | PencolourSt | GotoSt | PensizeSt | ScaleSt | PushstateSt | PopstateSt
-13: ForwardSt = forward_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
-14: RotateSt = rotate_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
-15: PenupSt = penup_keyword l_round_bracket_symbol r_round_bracket_symbol
-16: PendownSt = pendown_keyword l_round_bracket_symbol r_round_bracket_symbol
-17: PencolourSt = pencolour_keyword l_round_bracket_symbol int_number colon_symbol int_number colon_symbol int_number r_round_bracket_symbol
-18: GotoSt = goto_keyword l_round_bracket_symbol float_number colon_symbol float_number r_round_bracket_symbol
-19: PensizeSt = pensize_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
-20: ScaleSt = scale_keyword l_round_bracket_symbol float_number r_round_bracket_symbol
-21: PushstateSt = pushstate_keyword l_round_bracket_symbol r_round_bracket_symbol
-22: PopstateSt = popstate_keyword l_round_bracket_symbol r_round_bracket_symbol
+11: Evaluation = literal equals_symbol evaluate_keyword
+                 l_round_bracket_symbol int_number colon_symbol
+                 LiteralsString l_round_bracket_symbol
+12: TurtleOperation = TurtleOperationKeyword l_round_bracket_symbol
+                      TurtleOperationArguments r_round_bracket_symbol
+13: TurtleOperationKeyword = forward_keyword | rotate_keyword |
+                             penup_keyword | pendown_keyword |
+                             pencolour_keyword | goto_keyword |
+                             pensize_keyword | scale_keyword |
+                             pushstate_keyword | popstate_keyword
+14: TurtleOperationArguments = { Number colon_symbol }
+15: Number = int_number | float_number
 
 Trzecia wersja - po faktoryzacji - wygląda na to, że gramatyka jest regularna (w produkcji 2 dla uproszczenia zapisu zostawiłem symbol nieterminalny):
 1: Program = { Statement semicolon_symbol } end_of_text
-2: Statement = redefine_keyword Redefinition | literal Definition | execute_keyword LiteralExecution | TurtleOperationExecution
+2: Statement = redefine_keyword Redefinition | literal Definition |
+               execute_keyword LiteralExecution | TurtleOperationExecution
 3: Redefiniton = literal Definition
 4: Definition = production_operator Production | equals_symbol OperationOrEvaluation
 5: LiteralExecution = l_round_bracket_symbol LiteralString r_round_bracket_symbol
 6: TurtleOperationExecution = TurtleOperation 
 7: Production = LiteralsString
-8: OperationOrEvaluation = l_curly_bracket_symbol Operation | evaluate_keyword Evaluation
+8: OperationOrEvaluation = l_curly_bracket_symbol Operation |
+                           evaluate_keyword Evaluation
 9: Operation = { TurtleOperation semicolon_symbol } r_curly_bracket_symbol
-10: Evaluaton = l_round_bracket_symbol int_number colon_symbol LiteralString l_round_bracket_symbol
+10: Evaluaton = l_round_bracket_symbol int_number
+                colon_symbol LiteralString l_round_bracket_symbol
 11: LiteralString = { literal plus_symbol } literal
 12: TurtleOperation = forward_keyword ForwardOp | rotate_keyword RotateOp |
                       penup_keyword PenupOp | pendown_keyword PendownOp |
